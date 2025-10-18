@@ -1,10 +1,14 @@
-import './Card.css'
+import './Card.css';
+import HeartSVG from '@/assets/heart.svg'
+import CrossSVG from '@/assets/cross.svg'
+import SpeakerSVG from '@/assets/speaker.svg'
+import MicSVG from '@/assets/mic.svg'
 
 interface CardProps {
-  selected: string
+  selected: string;
 }
 
-export default function Card({selected}: CardProps) {
+export default function Card({ selected }: CardProps) {
   return (
     <>
       <div className="card-root">
@@ -15,23 +19,23 @@ export default function Card({selected}: CardProps) {
           <div className="card-header-inner">
             <span className="card-title">{selected}</span>
             <span className="card-subtle">noun</span>
-            <span className="card-subtle"> </span>
+            <span className="card-subtle"> 
+      <img src={HeartSVG} />
+
+
+            </span>
           </div>
         </div>
-  <div className="icon-slot pos-1">
+        <div className="icon-slot pos-1">
           <div className="icon-slot circle" />
-          <div className="icon-inner">
-            <div className="small-bar-a" />
-            <div className="small-bar-b" />
-          </div>
+          <img src={MicSVG} />
+          
         </div>
-  <div className="icon-slot pos-2">
+        <div className="icon-slot pos-2">
           <div className="icon-slot circle" />
-          <div className="icon-inner">
-            <div className="small-bar-a" style={{ left: '7.96px', width: '2.04px', height: '6.67px' }} />
-            <div className="small-bar-a" style={{ left: '6.83px', width: '1.53px', height: '4.17px' }} />
-            <div className="small-bar-a" style={{ left: '0px', width: '6.25px', height: '9.85px', top: '0.08px' }} />
-          </div>
+
+          <img src={SpeakerSVG} />
+
         </div>
         <div className="phonetic">
           <span className="phonetic-text">/dɪˈstrʌk.ʃən/</span>
@@ -55,14 +59,16 @@ export default function Card({selected}: CardProps) {
         <div className="chip-2-border" />
         <div className="chip-3-text">Demolition</div>
         <div className="chip-3-border" />
+        {/* 
         <div className="small-square">
           <div className="small-square-inner">
             <div className="small-square-fill" />
           </div>
         </div>
+        */}
         <div className="top-right-dot">
-          <div className="dot-bg" />
-          <div className="dot-mark" />
+
+       <img src={CrossSVG} />
         </div>
         <div className="word-library">
           <div className="label">Word Library</div>

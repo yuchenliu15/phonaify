@@ -15,7 +15,7 @@
   left: 0px;
   top: 183px;
   position: absolute;
-  background: linear-gradient(115deg, #7A91DD 0%, #FBA580 100%);
+  background: linear-gradient(115deg, #7a91dd 0%, #fba580 100%);
   box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.4);
   border-radius: 10px;
 }
@@ -28,7 +28,7 @@
   position: absolute;
   background: white;
   box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.4);
-  border: 0.50px solid #E0E0E0;
+  border: 0.5px solid #e0e0e0;
 }
 
 .card-header {
@@ -70,12 +70,18 @@
   position: absolute;
 }
 
-.icon-slot.pos-1 { left: 123px; top: 30px; }
-.icon-slot.pos-2 { left: 102px; top: 30px; }
+.icon-slot.pos-1 {
+  left: 123px;
+  top: 30px;
+}
+.icon-slot.pos-2 {
+  left: 102px;
+  top: 30px;
+}
 
 .icon-slot.circle {
   border-radius: 9999px;
-  border: 0.50px solid #7A91DD;
+  border: 0.5px solid #7a91dd;
   width: 16px;
   height: 16px;
   position: absolute;
@@ -98,7 +104,7 @@
   left: 1.67px;
   top: 0px;
   position: absolute;
-  background: linear-gradient(180deg, #7A91DD 0%, #FBA580 100%);
+  background: linear-gradient(180deg, #7a91dd 0%, #fba580 100%);
 }
 
 .small-bar-b {
@@ -107,7 +113,7 @@
   left: 0px;
   top: 5px;
   position: absolute;
-  background: linear-gradient(180deg, #7A91DD 0%, #FBA580 100%);
+  background: linear-gradient(180deg, #7a91dd 0%, #fba580 100%);
 }
 
 .phonetic {
@@ -122,13 +128,16 @@
 }
 
 .phonetic-text {
-  color: #7A91DD;
+  color: #7a91dd;
   font-size: 15px;
   font-weight: 400;
   word-wrap: break-word;
 }
 
-.phonetic-spacer { color: #202124; font-size: 15px; }
+.phonetic-spacer {
+  color: #202124;
+  font-size: 15px;
+}
 
 .definition {
   width: 165px;
@@ -154,7 +163,7 @@
   justify-content: center;
   display: flex;
   flex-direction: column;
-  color: #5F6368;
+  color: #5f6368;
   font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
@@ -169,7 +178,7 @@
   justify-content: center;
   display: flex;
   flex-direction: column;
-  color: #5F6368;
+  color: #5f6368;
   font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
@@ -192,7 +201,9 @@
   word-wrap: break-word;
 }
 
-.example-text .underline { text-decoration: underline; }
+.example-text .underline {
+  text-decoration: underline;
+}
 
 .synonyms {
   width: 165px;
@@ -203,7 +214,7 @@
   justify-content: center;
   display: flex;
   flex-direction: column;
-  color: #5F6368;
+  color: #5f6368;
   font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
@@ -231,7 +242,7 @@
   top: 180px;
   position: absolute;
   border-radius: 5px;
-  border: 0.50px solid #7A91DD;
+  border: 0.5px solid #7a91dd;
 }
 
 .chip-2-text {
@@ -256,7 +267,7 @@
   top: 180px;
   position: absolute;
   border-radius: 5px;
-  border: 0.50px solid #7A91DD;
+  border: 0.5px solid #7a91dd;
 }
 
 .chip-3-text {
@@ -281,7 +292,7 @@
   top: 180px;
   position: absolute;
   border-radius: 5px;
-  border: 0.50px solid #7A91DD;
+  border: 0.5px solid #7a91dd;
 }
 
 .small-square {
@@ -307,7 +318,7 @@
   left: 0px;
   top: 0.72px;
   position: absolute;
-  background: #B2C5FF;
+  background: #b2c5ff;
 }
 
 .top-right-dot {
@@ -325,9 +336,9 @@
   left: 0px;
   top: 0px;
   position: absolute;
-  background: #E0E0E0;
+  background: #e0e0e0;
   border-radius: 9999px;
-  border: 0.50px solid #E0E0E0;
+  border: 0.5px solid #e0e0e0;
 }
 
 .top-right-dot .dot-mark {
@@ -338,8 +349,8 @@
   position: absolute;
   transform: rotate(-45deg);
   transform-origin: top left;
-  outline: 0.80px white solid;
-  outline-offset: -0.40px;
+  outline: 0.8px white solid;
+  outline-offset: -0.4px;
 }
 
 .word-library {
