@@ -1,10 +1,10 @@
-import Logo from '@/assets/crx.svg'
-import { useState } from 'react'
-import './App.css'
+import Logo from '@/assets/crx.svg';
+import { useState } from 'react';
+import './App.css';
 
 function App() {
-  const [show, setShow] = useState(false)
-  const toggle = () => setShow(!show)
+  const [show, setShow] = useState(false);
+  const toggle = () => setShow(!show);
 
   return (
     <div className="popup-container">
@@ -17,7 +17,7 @@ function App() {
         <img src={Logo} alt="CRXJS logo" className="button-icon" />
       </button>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

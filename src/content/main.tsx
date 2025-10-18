@@ -1,6 +1,6 @@
-import React from "react";
-import { createRoot } from "react-dom/client";
-import Card from "@/components/Card";
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import Card from '@/components/Card';
 
 console.log('[CRXJS] Content script loaded.');
 
@@ -19,25 +19,25 @@ document.addEventListener('mouseup', (ev) => {
   const selection = window.getSelection();
   if (selection && selection.toString().length > 0) {
     console.log('Text Selected:', selection.toString());
-    
-    if(selection.rangeCount === 0) {
+
+    if (selection.rangeCount === 0) {
       return;
     }
-    
+
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
     const icon = document.createElement('img');
     icon.src = chrome.runtime.getURL('logo.png');
     icon.style.position = 'absolute';
     icon.style.left = `${rect.right + window.scrollX}px`;
-    icon.style.top = `${rect.top + window.scrollY-30}px`;
+    icon.style.top = `${rect.top + window.scrollY - 30}px`;
     icon.style.width = '30px';
     icon.style.height = '30px';
     icon.style.cursor = 'pointer';
     icon.id = 'phonaify-highlight-icon';
 
     icon.addEventListener('click', () => {
-      console.log("Logo clicked!");
+      console.log('Logo clicked!');
       // remove any existing card container
       const existingCard = document.getElementById('phonaify-card-container');
       if (existingCard) {
@@ -62,12 +62,12 @@ document.addEventListener('mouseup', (ev) => {
       // mount React Card into the container
       try {
         const root = createRoot(container);
-        root.render(React.createElement(Card, { msg: selection.toString()}));
+        root.render(React.createElement(Card, { msg: selection.toString() }));
         console.log('Just mounted Card');
       } catch (err) {
         console.error('Failed to mount Card', err);
       }
-      console.log("End click")
+      console.log('End click');
     });
 
     // Remove any existing icon
