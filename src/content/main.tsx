@@ -1,6 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import Card from '../views/Card';
+import Card from './views/Card';
 
 console.log('[CRXJS] Content script loaded.');
 
@@ -62,7 +62,7 @@ document.addEventListener('mouseup', (ev) => {
       // mount React Card into the container
       try {
         const root = createRoot(container);
-        root.render(React.createElement(Card, { msg: selection.toString() }));
+        root.render(React.createElement(Card, { selected: selection.toString() }));
         console.log('Just mounted Card');
       } catch (err) {
         console.error('Failed to mount Card', err);

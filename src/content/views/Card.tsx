@@ -1,16 +1,19 @@
 import './Card.css'
 
-export default function Card(props: { msg: string, }) {
+interface CardProps {
+  selected: string
+}
+
+export default function Card({selected}: CardProps) {
   return (
     <>
       <div className="card-root">
         {/* keep props.msg referenced so lint/TS doesn't mark it unused */}
-        <span className="card-hidden-msg">{props.msg}</span>
         <div className="card-gradient" />
         <div className="card-panel" />
         <div className="card-header">
           <div className="card-header-inner">
-            <span className="card-title">Destruction </span>
+            <span className="card-title">{selected}</span>
             <span className="card-subtle">noun</span>
             <span className="card-subtle"> </span>
           </div>
