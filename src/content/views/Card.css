@@ -1,0 +1,391 @@
+.card-root {
+  --card-scale: 1; /* change this to scale the whole card */
+  width: 100%;
+  height: 100%;
+  position: relative;
+  font-family: 'Noto Sans', sans-serif;
+  transform-origin: top left;
+  transform: scale(1.5);
+}
+
+.card-hidden-msg {
+  display: none;
+}
+
+.card-gradient {
+  width: 181px;
+  height: 39px;
+  left: 0px;
+  top: 183px;
+  position: absolute;
+  background: linear-gradient(115deg, #7A91DD 0%, #FBA580 100%);
+  box-shadow: 2px 4px 4px rgba(0, 0, 0, 0.4);
+  border-radius: 10px;
+}
+
+/* convenience class to make the card larger */
+.card-scaled {
+  --card-scale: 1.25; /* 25% bigger */
+}
+
+.card-panel {
+  width: 181px;
+  height: 200px;
+  left: 0px;
+  top: 1px;
+  position: absolute;
+  background: white;
+  box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.4);
+  border: 0.50px solid #E0E0E0;
+}
+
+.card-header {
+  width: 71px;
+  height: 9px;
+  left: 7px;
+  top: 17px;
+  position: absolute;
+}
+
+.card-header-inner {
+  width: 85px;
+  height: 9px;
+  left: 0px;
+  top: 0px;
+  position: absolute;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.card-title {
+  color: #202124;
+  font-size: 9px;
+  font-weight: 500;
+  word-wrap: break-word;
+}
+
+.card-subtle {
+  color: #202124;
+  font-size: 7px;
+  font-weight: 100;
+  word-wrap: break-word;
+}
+
+.icon-slot {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+}
+
+.icon-slot.pos-1 { left: 123px; top: 30px; }
+.icon-slot.pos-2 { left: 102px; top: 30px; }
+
+.icon-slot.circle {
+  border-radius: 9999px;
+  border: 0.50px solid #7A91DD;
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+.icon-inner {
+  width: 10px;
+  height: 10px;
+  left: 3px;
+  top: 3px;
+  position: absolute;
+  overflow: hidden;
+}
+
+.small-bar-a {
+  width: 6.67px;
+  height: 8.33px;
+  left: 1.67px;
+  top: 0px;
+  position: absolute;
+  background: linear-gradient(180deg, #7A91DD 0%, #FBA580 100%);
+}
+
+.small-bar-b {
+  width: 10px;
+  height: 5px;
+  left: 0px;
+  top: 5px;
+  position: absolute;
+  background: linear-gradient(180deg, #7A91DD 0%, #FBA580 100%);
+}
+
+.phonetic {
+  width: 89px;
+  height: 16px;
+  left: 8px;
+  top: 30px;
+  position: absolute;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.phonetic-text {
+  color: #7A91DD;
+  font-size: 15px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.phonetic-spacer { color: #202124; font-size: 15px; }
+
+.definition {
+  width: 165px;
+  height: 31px;
+  left: 8px;
+  top: 72px;
+  position: absolute;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: #202124;
+  font-size: 9px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.label {
+  width: 165px;
+  height: 11px;
+  left: 8px;
+  top: 56px;
+  position: absolute;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: #5F6368;
+  font-size: 8px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.example {
+  width: 165px;
+  height: 13px;
+  left: 8px;
+  top: 113px;
+  position: absolute;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: #5F6368;
+  font-size: 8px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.example-text {
+  width: 165px;
+  left: 8px;
+  top: 131px;
+  position: absolute;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.example-text span {
+  color: black;
+  font-size: 9px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.example-text .underline { text-decoration: underline; }
+
+.synonyms {
+  width: 165px;
+  height: 10px;
+  left: 8px;
+  top: 165px;
+  position: absolute;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: #5F6368;
+  font-size: 8px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.chip-text {
+  width: 26px;
+  left: 8px;
+  top: 180px;
+  position: absolute;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: #202124;
+  font-size: 9px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.chip-border {
+  width: 26px;
+  height: 12px;
+  left: 8px;
+  top: 180px;
+  position: absolute;
+  border-radius: 5px;
+  border: 0.50px solid #7A91DD;
+}
+
+.chip-2-text {
+  width: 59px;
+  left: 39px;
+  top: 180px;
+  position: absolute;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: #202124;
+  font-size: 9px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.chip-2-border {
+  width: 59px;
+  height: 12px;
+  left: 39px;
+  top: 180px;
+  position: absolute;
+  border-radius: 5px;
+  border: 0.50px solid #7A91DD;
+}
+
+.chip-3-text {
+  width: 53px;
+  left: 103px;
+  top: 180px;
+  position: absolute;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: #202124;
+  font-size: 9px;
+  font-weight: 400;
+  word-wrap: break-word;
+}
+
+.chip-3-border {
+  width: 53px;
+  height: 12px;
+  left: 103px;
+  top: 180px;
+  position: absolute;
+  border-radius: 5px;
+  border: 0.50px solid #7A91DD;
+}
+
+.small-square {
+  width: 9px;
+  height: 9px;
+  left: 83px;
+  top: 17px;
+  position: absolute;
+}
+
+.small-square-inner {
+  width: 9px;
+  height: 9px;
+  left: 0px;
+  top: 0px;
+  position: absolute;
+  overflow: hidden;
+}
+
+.small-square-fill {
+  width: 9px;
+  height: 7.91px;
+  left: 0px;
+  top: 0.72px;
+  position: absolute;
+  background: #B2C5FF;
+}
+
+.top-right-dot {
+  width: 9px;
+  height: 9px;
+  left: 167px;
+  top: 17px;
+  position: absolute;
+  background: white;
+}
+
+.top-right-dot .dot-bg {
+  width: 9px;
+  height: 9px;
+  left: 0px;
+  top: 0px;
+  position: absolute;
+  background: #E0E0E0;
+  border-radius: 9999px;
+  border: 0.50px solid #E0E0E0;
+}
+
+.top-right-dot .dot-mark {
+  width: 3px;
+  height: 2px;
+  left: 2.77px;
+  top: 4.85px;
+  position: absolute;
+  transform: rotate(-45deg);
+  transform-origin: top left;
+  outline: 0.80px white solid;
+  outline-offset: -0.40px;
+}
+
+.word-library {
+  width: 71px;
+  height: 22px;
+  left: 55px;
+  top: 202px;
+  position: absolute;
+}
+
+.word-library .label {
+  width: 56px;
+  height: 22px;
+  left: 0px;
+  top: -2px;
+  position: absolute;
+  text-align: center;
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  font-size: 9px;
+  font-weight: 400;
+}
+
+.word-library .small-rect {
+  width: 10px;
+  height: 9px;
+  left: 61px;
+  top: 5px;
+  position: absolute;
+}
+
+.word-library .small-rect .fill {
+  width: 8px;
+  height: 6px;
+  left: 1.25px;
+  top: 2px;
+  position: absolute;
+  background: white;
+}
