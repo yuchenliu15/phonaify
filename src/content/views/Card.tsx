@@ -1,14 +1,61 @@
 import './Card.css';
-import HeartSVG from '@/assets/heart.svg'
-import CrossSVG from '@/assets/cross.svg'
-import SpeakerSVG from '@/assets/speaker.svg'
-import MicSVG from '@/assets/mic.svg'
+import HeartSVG from '@/assets/heart.svg';
+import CrossSVG from '@/assets/cross.svg';
+import SpeakerSVG from '@/assets/speaker.svg';
+import MicSVG from '@/assets/mic.svg';
+import { useEffect, useRef, useState } from 'react';
 
 interface CardProps {
   selected: string;
 }
 
+
 export default function Card({ selected }: CardProps) {
+  const session = useRef(null);
+
+  const removeSession = () => {
+  if(session.current) {
+      session.current.destroy();
+    }
+  }
+
+  async function runPrompt(prompt, params) {
+  try {
+    if (!session.current) {
+      session.current = await LanguageModel.create(params);
+    }
+    return session.current.prompt(prompt);
+  } catch (e) {
+    console.log('Prompt failed');
+    console.error(e);
+    console.log('Prompt:', prompt);
+    // Reset session
+    removeSession(); 
+    throw e;
+  }
+}
+
+  useEffect(() => {
+    const initModel = async () => {
+      try {
+        const params = {
+          initialPrompts: [
+            { role: 'system', content: 'You are a helpful and friendly assistant.' },
+          ],
+        };
+        const response = await runPrompt('Give definition of ' + selected, params);
+        console.log("card prompt")
+        console.log(response);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    initModel();
+    return () => {
+      removeSession();
+    };
+  });
+
   return (
     <>
       <div className="card-root">
@@ -19,23 +66,19 @@ export default function Card({ selected }: CardProps) {
           <div className="card-header-inner">
             <span className="card-title">{selected}</span>
             <span className="card-subtle">noun</span>
-            <span className="card-subtle"> 
-      <img src={HeartSVG} />
-
-
+            <span className="card-subtle">
+              <img src={HeartSVG} />
             </span>
           </div>
         </div>
         <div className="icon-slot pos-1">
           <div className="icon-slot circle" />
           <img src={MicSVG} />
-          
         </div>
         <div className="icon-slot pos-2">
           <div className="icon-slot circle" />
 
           <img src={SpeakerSVG} />
-
         </div>
         <div className="phonetic">
           <span className="phonetic-text">/dɪˈstrʌk.ʃən/</span>
@@ -67,8 +110,7 @@ export default function Card({ selected }: CardProps) {
         </div>
         */}
         <div className="top-right-dot">
-
-       <img src={CrossSVG} />
+          <img src={CrossSVG} />
         </div>
         <div className="word-library">
           <div className="label">Word Library</div>
