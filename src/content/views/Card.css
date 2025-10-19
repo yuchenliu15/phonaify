@@ -8,6 +8,38 @@
   transform: scale(1.5);
 }
 
+/* explicit skeleton blocks positioned to mirror the absolute layout of the card */
+.card-skeleton {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 181px;
+  height: 200px;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.card-skeleton > div {
+  position: absolute;
+  background: linear-gradient(90deg, #f0f0f0 0%, #e6e6e6 40%, #f0f0f0 100%);
+  background-size: 200% 100%;
+  animation: card-shimmer 1.2s linear infinite;
+  border-radius: 4px;
+}
+
+.card-skeleton .skel-title { left: 8px; top: 8px; width: 90px; height: 12px; }
+.card-skeleton .skel-phonetic { left: 8px; top: 30px; width: 90px; height: 16px; }
+.card-skeleton .skel-definition { left: 8px; top: 67px; width: 165px; height: 36px; }
+.card-skeleton .skel-chip-1 { left: 8px; top: 160px; width: 26px; height: 12px; border-radius: 5px; }
+.card-skeleton .skel-chip-2 { left: 39px; top: 160px; width: 59px; height: 12px; border-radius: 5px; }
+.card-skeleton .skel-chip-3 { left: 103px; top: 160px; width: 53px; height: 12px; border-radius: 5px; }
+.card-skeleton .skel-icon-1 { left: 123px; top: 30px; width: 16px; height: 16px; border-radius: 9999px; }
+.card-skeleton .skel-icon-2 { left: 102px; top: 30px; width: 16px; height: 16px; border-radius: 9999px; }
+.card-skeleton .skel-dot { left: 167px; top: 0px; width: 9px; height: 9px; border-radius: 9999px; }
+
+/* hide actual icons/images during loading to avoid misalignment */
+.card-root.loading img { visibility: hidden; }
+
 .card-hidden-msg {
   display: none;
 }
@@ -37,13 +69,16 @@
   background: white;
   box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.4);
   border: 0.5px solid #e0e0e0;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  overflow: hidden;
 }
 
 .card-header {
   width: 71px;
   height: 9px;
   left: 7px;
-  top: 17px;
+  top: 8px;
   position: absolute;
 }
 
@@ -83,6 +118,7 @@
   left: 123px;
   top: 30px;
 }
+
 .icon-slot.pos-2 {
   left: 102px;
   top: 30px;
@@ -152,7 +188,8 @@
   width: 165px;
   height: 31px;
   left: 8px;
-  top: 72px;
+  top: 67px;
+  line-height: 10px;
   position: absolute;
   justify-content: center;
   display: flex;
@@ -182,7 +219,7 @@
   width: 165px;
   height: 13px;
   left: 8px;
-  top: 113px;
+  top: 107px;
   position: absolute;
   justify-content: center;
   display: flex;
@@ -196,11 +233,16 @@
 .example-text {
   width: 165px;
   left: 8px;
-  top: 131px;
+  top: 120px;
+  line-height: 10px;
   position: absolute;
   justify-content: center;
   display: flex;
   flex-direction: column;
+  color: #202124;
+  font-size: 9px;
+  font-weight: 400;
+  word-wrap: break-word;
 }
 
 .example-text span {
@@ -218,7 +260,7 @@
   width: 165px;
   height: 10px;
   left: 8px;
-  top: 165px;
+  top: 150px;
   position: absolute;
   justify-content: center;
   display: flex;
@@ -232,7 +274,7 @@
 .chip-text {
   width: 26px;
   left: 8px;
-  top: 180px;
+  top: 160px;
   position: absolute;
   text-align: center;
   justify-content: center;
@@ -248,7 +290,7 @@
   width: 26px;
   height: 12px;
   left: 8px;
-  top: 180px;
+  top: 165px;
   position: absolute;
   border-radius: 5px;
   border: 0.5px solid #7a91dd;
@@ -257,7 +299,7 @@
 .chip-2-text {
   width: 59px;
   left: 39px;
-  top: 180px;
+  top: 160px;
   position: absolute;
   text-align: center;
   justify-content: center;
@@ -273,7 +315,7 @@
   width: 59px;
   height: 12px;
   left: 39px;
-  top: 180px;
+  top: 165px;
   position: absolute;
   border-radius: 5px;
   border: 0.5px solid #7a91dd;
@@ -282,7 +324,7 @@
 .chip-3-text {
   width: 53px;
   left: 103px;
-  top: 180px;
+  top: 160px;
   position: absolute;
   text-align: center;
   justify-content: center;
@@ -298,7 +340,7 @@
   width: 53px;
   height: 12px;
   left: 103px;
-  top: 180px;
+  top: 165px;
   position: absolute;
   border-radius: 5px;
   border: 0.5px solid #7a91dd;
@@ -334,7 +376,7 @@
   width: 9px;
   height: 9px;
   left: 167px;
-  top: 17px;
+  top: 0px;
   position: absolute;
   background: white;
 }
@@ -400,4 +442,53 @@
   top: 2px;
   position: absolute;
   background: white;
+}
+
+/* center any direct img inside icon-slot */
+.icon-slot > img {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px; /* size to fit inside the 16px circle with padding */
+  height: 10px;
+  object-fit: contain;
+}
+
+/* Full-card skeleton (single block covering the card) */
+.card-full-skeleton {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 181px;
+  height: 200px;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto; /* block interactions */
+  border-radius: 10px 10px 4px 4px; /* match panel rounding */
+  overflow: hidden;
+}
+
+.card-full-shimmer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #ebedf0 0%, #e0e0e0 30%, #ebedf0 60%);
+  background-size: 200% 100%;
+  animation: full-shimmer 1.2s linear infinite, skeleton-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes full-shimmer {
+  0% { background-position: -150% 0; }
+  100% { background-position: 150% 0; }
+}
+
+@keyframes skeleton-pulse {
+  0% { opacity: 0.95; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(0.995); }
+  100% { opacity: 0.95; transform: scale(1); }
 }
