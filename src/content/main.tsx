@@ -66,7 +66,7 @@ document.addEventListener('mouseup', (ev) => {
       try {
         const root = createRoot(container);
         const firstWord = selection.toString().split(' ')[0];
-        root.render(React.createElement(Card, { selected:  firstWord}));
+        root.render(React.createElement(Card, { selected: firstWord }));
         console.log('Just mounted Card');
       } catch (err) {
         console.error('Failed to mount Card', err);

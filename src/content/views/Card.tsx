@@ -9,31 +9,53 @@ interface CardProps {
   selected: string;
 }
 
+const DEF_SCHMEA = {
+  type: 'object',
+  properties: {
+    synonyms: {
+      type: 'array',
+      maxItems: 3,
+      items: {
+        type: 'string',
+      },
+    },
+    definition: {
+      type: 'string',
+    },
+  },
+  exmpaleSentence: {
+    type: 'string',
+  },
+  phoneticAlphabet: {
+    type: 'string',
+  },
+};
 
 export default function Card({ selected }: CardProps) {
   const session = useRef(null);
 
   const removeSession = () => {
-  if(session.current) {
+    if (session.current) {
       session.current.destroy();
     }
-  }
+  };
 
-  async function runPrompt(prompt, params) {
-  try {
-    if (!session.current) {
-      session.current = await LanguageModel.create(params);
+  async function runPrompt(prompt, params, schema = {}) {
+    console.log('runPromp() called with schema: ', schema);
+    try {
+      if (!session.current) {
+        session.current = await LanguageModel.create(params);
+      }
+      return session.current.prompt(prompt, { responseConstraint: schema });
+    } catch (e) {
+      console.log('Prompt failed');
+      console.error(e);
+      console.log('Prompt:', prompt);
+      // Reset session
+      removeSession();
+      throw e;
     }
-    return session.current.prompt(prompt);
-  } catch (e) {
-    console.log('Prompt failed');
-    console.error(e);
-    console.log('Prompt:', prompt);
-    // Reset session
-    removeSession(); 
-    throw e;
   }
-}
 
   useEffect(() => {
     const initModel = async () => {
@@ -43,8 +65,8 @@ export default function Card({ selected }: CardProps) {
             { role: 'system', content: 'You are a helpful and friendly assistant.' },
           ],
         };
-        const response = await runPrompt('Give definition of ' + selected, params);
-        console.log("card prompt")
+        const response = await runPrompt('Give definition of ' + selected, params, DEF_SCHMEA);
+        console.log('card prompt');
         console.log(response);
       } catch (e) {
         console.error(e);
