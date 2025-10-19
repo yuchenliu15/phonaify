@@ -34,7 +34,7 @@ const DEF_SCHMEA = {
 export default function Card({ selected }: CardProps) {
   const session = useRef(null);
   const [loading, setLoading] = useState(true);
-  const [syn, setSyn] = useState([]);
+  const [syns, setSyns] = useState<string[]>([]);
   const [def, setDef] = useState('');
   const [phon, setPhon] = useState('');
 
@@ -74,6 +74,8 @@ export default function Card({ selected }: CardProps) {
         const response = await runPrompt('Give definition of ' + selected, params, DEF_SCHMEA);
         console.log('card prompt');
         console.log(response);
+        const parsed = JSON.parse(response);
+        setSyns(parsed['synonyms']);
 
         if (mounted) setLoading(false);
       } catch (e) {
@@ -129,12 +131,17 @@ export default function Card({ selected }: CardProps) {
           "The earthquake caused widespread destruction throughout the city.”
         </div>
         <div className="synonyms">Synonyms</div>
-        <div className="chip-text">Ruin</div>
-        <div className="chip-border" />
-        <div className="chip-2-text">Devastation</div>
-        <div className="chip-2-border" />
-        <div className="chip-3-text">Demolition</div>
-        <div className="chip-3-border" />
+        <div className="chips">
+          {syns && syns.length > 0 ? (
+            syns.map((syn, i) => (
+              <div key={i} className="chip">
+                {syn}
+              </div>
+            ))
+          ) : (
+            <div className="chip">—</div>
+          )}
+        </div>
         {/* 
         <div className="small-square">
           <div className="small-square-inner">

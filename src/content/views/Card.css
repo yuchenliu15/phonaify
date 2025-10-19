@@ -346,6 +346,31 @@
   border: 0.5px solid #7a91dd;
 }
 
+/* responsive chips container for synonyms */
+.chips {
+  width: 165px;
+  position: absolute;
+  left: 8px;
+  top: 165px;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  align-items: center;
+  max-width: 165px;
+  flex-wrap: wrap;
+}
+
+.chip {
+  background: white;
+  border: 0.5px solid #7a91dd;
+  color: #202124;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 9px;
+  line-height: 9px;
+  box-shadow: none;
+}
+
 .small-square {
   width: 9px;
   height: 9px;
