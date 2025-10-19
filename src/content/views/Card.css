@@ -124,6 +124,10 @@
   top: 30px;
 }
 
+.icon-slot.pos-2:hover {
+  cursor: pointer;
+}
+
 .icon-slot.circle {
   border-radius: 9999px;
   border: 0.5px solid #7a91dd;

@@ -53,6 +53,26 @@ export default function Card({ selected }: CardProps) {
   const [part, setPart] = useState('');
   const [example, setExample] = useState('');
 
+  const onSpeakerClick = () => {
+
+  // 1. Check for browser support
+  if ('speechSynthesis' in window) {
+    // 2. Create a new utterance object
+    const utterance = new SpeechSynthesisUtterance(selected);
+
+    // Optional: Set properties for pronunciation control
+    utterance.rate = 1;      // Speed (0.1 to 10)
+    utterance.pitch = 1.2;   // Pitch (0 to 2)
+    // utterance.voice = /* choose from speechSynthesis.getVoices() */;
+
+    // 3. Speak the word
+    window.speechSynthesis.speak(utterance);
+  } else {
+    alert("Your browser does not support the Web Speech API.");
+  }
+
+  };
+
   const removeSession = () => {
     if (session.current) {
       session.current.destroy();
@@ -133,7 +153,7 @@ export default function Card({ selected }: CardProps) {
           <div className="icon-slot circle" />
           <img src={MicSVG} className="icon-inner" />
         </div>
-        <div className="icon-slot pos-2">
+        <div className="icon-slot pos-2" onClick={onSpeakerClick}>
           <div className="icon-slot circle" />
           <img src={SpeakerSVG} />
         </div>
