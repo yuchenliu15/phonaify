@@ -403,7 +403,10 @@
   left: 167px;
   top: 0px;
   position: absolute;
-  background: white;
+}
+
+.top-right-dot:hover {
+  cursor: pointer;
 }
 
 .top-right-dot .dot-bg {

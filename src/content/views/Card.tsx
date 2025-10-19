@@ -168,9 +168,11 @@ export default function Card({ selected }: CardProps) {
           </div>
         </div>
         */}
+        {/*
         <div className="top-right-dot">
           <img src={CrossSVG} />
         </div>
+        */}
         <div className="word-library">
           <div className="label">Word Library</div>
           <div className="small-rect">
