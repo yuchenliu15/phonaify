@@ -1,3 +1,5 @@
+/* global LanguageModel */
+
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Card from './views/Card';
@@ -36,8 +38,9 @@ document.addEventListener('mouseup', (ev) => {
     icon.style.cursor = 'pointer';
     icon.id = 'phonaify-highlight-icon';
 
-    icon.addEventListener('click', () => {
+    icon.addEventListener('click', async () => {
       console.log('Logo clicked!');
+
       // remove any existing card container
       const existingCard = document.getElementById('phonaify-card-container');
       if (existingCard) {
@@ -62,7 +65,8 @@ document.addEventListener('mouseup', (ev) => {
       // mount React Card into the container
       try {
         const root = createRoot(container);
-        root.render(React.createElement(Card, { selected: selection.toString() }));
+        const firstWord = selection.toString().split(' ')[0];
+        root.render(React.createElement(Card, { selected:  firstWord}));
         console.log('Just mounted Card');
       } catch (err) {
         console.error('Failed to mount Card', err);
