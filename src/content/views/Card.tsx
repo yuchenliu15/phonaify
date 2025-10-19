@@ -11,24 +11,37 @@ interface CardProps {
 
 const DEF_SCHMEA = {
   type: 'object',
+  description: 'A comprehensive definition object for a single word.', // Optional: Describe the whole object
   properties: {
     synonyms: {
       type: 'array',
-      maxItems: 3,
+      description: 'A list of up to 3 words that have the same or similar meaning.', // Hint/Explanation
+      maxItems: 3, // Hard limit on the number of items
       items: {
         type: 'string',
+        description: 'A single synonym word.',
       },
     },
     definition: {
       type: 'string',
+      description: 'A very short explanation of the word’s meaning, limited to 15 words. You must limit to 15 words.', // Hint for word count
+      maxLength: 75, 
     },
-  },
-  exmpaleSentence: {
-    type: 'string',
-  },
-  phoneticAlphabet: {
-    type: 'string',
-  },
+    exampleSentence: {
+      type: 'string',
+      description: 'A short sentence using the word, limited to 15 words.', // Hint for word count
+      maxLength: 75
+    },
+    phoneticAlphabet: {
+      type: 'string',
+      description: 'The phonetic spelling of the word using the International Phonetic Alphabet (IPA).', // Hint/Explanation
+    },
+    partsOfSpeech: {
+      type: 'string',
+      description: 'The grammatical category of the word (e.g., noun, verb, adjective).', // Hint/Explanation
+      enum: ["noun", "verb", "adjective", "adverb", "preposition", "conjunction", "interjection"] // Optional: Restrict possible values
+    }
+  }
 };
 
 export default function Card({ selected }: CardProps) {
@@ -37,6 +50,8 @@ export default function Card({ selected }: CardProps) {
   const [syns, setSyns] = useState<string[]>([]);
   const [def, setDef] = useState('');
   const [phon, setPhon] = useState('');
+  const [part, setPart] = useState('');
+  const [example, setExample] = useState('');
 
   const removeSession = () => {
     if (session.current) {
@@ -68,7 +83,7 @@ export default function Card({ selected }: CardProps) {
       try {
         const params = {
           initialPrompts: [
-            { role: 'system', content: 'You are a helpful and friendly assistant.' },
+            { role: 'system', content: 'You are a helpful and friendly assistant who gives short and concise answers.' },
           ],
         };
         const response = await runPrompt('Give definition of ' + selected, params, DEF_SCHMEA);
@@ -76,6 +91,10 @@ export default function Card({ selected }: CardProps) {
         console.log(response);
         const parsed = JSON.parse(response);
         setSyns(parsed['synonyms']);
+        setPart(parsed['partsOfSpeech']);
+        setExample(parsed['exampleSentence']);
+        setDef(parsed['definition']);
+        setPhon(parsed['phoneticAlphabet']);
 
         if (mounted) setLoading(false);
       } catch (e) {
@@ -104,7 +123,7 @@ export default function Card({ selected }: CardProps) {
         <div className="card-header">
           <div className="card-header-inner">
             <span className="card-title">{selected}</span>
-            <span className="card-subtle">noun</span>
+            <span className="card-subtle">{part}</span>
             <span className="card-subtle">
               <img src={HeartSVG} />
             </span>
@@ -119,16 +138,16 @@ export default function Card({ selected }: CardProps) {
           <img src={SpeakerSVG} />
         </div>
         <div className="phonetic">
-          <span className="phonetic-text">/dɪˈstrʌk.ʃən/</span>
+          <span className="phonetic-text">{phon}</span>
           <span className="phonetic-spacer"> </span>
         </div>
         <div className="label">Definition</div>
         <div className="definition">
-          The act or process of causing so much damage to something that it no longer exists or cannot be repaired.
+          {def}
         </div>
         <div className="example">Example Sentence</div>
         <div className="example-text">
-          "The earthquake caused widespread destruction throughout the city.”
+          "{example}”
         </div>
         <div className="synonyms">Synonyms</div>
         <div className="chips">
