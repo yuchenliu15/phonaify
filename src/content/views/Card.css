@@ -128,11 +128,11 @@
 }
 
 .card-body {
+  gap: 6px;
   position: absolute;
   left: 0px;
   top: 1px;
   width: 181px;
-  height: 200px;
   display: flex;
   flex-direction: column;
   padding: 8px;
@@ -140,25 +140,17 @@
   pointer-events: none; /* allow specific children to accept pointer events */
 }
 
-.header-area { display:flex; justify-content:space-between; align-items:flex-start; pointer-events: auto; }
-.left-header { display:flex; flex-direction:column; gap:6px; }
-.icons-group { display:flex; gap:6px; align-items:center; pointer-events: auto; }
-.card-scroll { margin-top:6px; overflow-y:auto; max-height: 120px; pointer-events: auto; }
-
-.card-header {
-  width: 71px;
-  height: 9px;
-  left: 7px;
-  top: 8px;
-  position: absolute;
+.icons-group {
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+  pointer-events: auto;
 }
 
-.card-header-inner {
+.card-header {
   width: 100px;
-  height: 9px;
-  left: 0px;
-  top: 0px;
-  position: absolute;
+  height: 10px;
   justify-content: left;
   display: flex;
   flex-direction: row;
@@ -175,27 +167,17 @@
 .card-subtle {
   color: #202124;
   font-size: 7px;
-  font-weight: 100;
+  font-weight: 50;
   word-wrap: break-word;
 }
 
 .icon-slot {
   width: 16px;
   height: 16px;
-  position: absolute;
 }
 
-.icon-slot.pos-1 {
-  left: 123px;
-  top: 30px;
-}
-
-.icon-slot.pos-2 {
-  left: 102px;
-  top: 30px;
-}
-
-.icon-slot.pos-1:hover, .icon-slot.pos-2:hover {
+.icon-slot.pos-1:hover,
+.icon-slot.pos-2:hover {
   cursor: pointer;
 }
 
@@ -205,8 +187,6 @@
   width: 16px;
   height: 16px;
   position: absolute;
-  left: 0;
-  top: 0;
 }
 
 .icon-inner {
@@ -236,15 +216,16 @@
   background: linear-gradient(180deg, #7a91dd 0%, #fba580 100%);
 }
 
+.phonetic-group {
+  display: inline-flex;
+  flex-direction: row;
+  gap: 15px;
+}
+
 .phonetic {
-  width: 89px;
   height: 16px;
-  left: 8px;
-  top: 30px;
-  position: absolute;
-  justify-content: center;
+  justify-content: left;
   display: flex;
-  flex-direction: column;
 }
 
 .phonetic-text {
@@ -259,13 +240,11 @@
   font-size: 15px;
 }
 
+.definition-group {
+}
 .definition {
   width: 165px;
-  height: 31px;
-  left: 8px;
-  top: 67px;
   line-height: 10px;
-  position: absolute;
   justify-content: center;
   display: flex;
   flex-direction: column;
@@ -278,10 +257,6 @@
 .label {
   width: 165px;
   height: 11px;
-  left: 8px;
-  top: 56px;
-  position: absolute;
-  justify-content: center;
   display: flex;
   flex-direction: column;
   color: #5f6368;
@@ -293,9 +268,6 @@
 .example {
   width: 165px;
   height: 13px;
-  left: 8px;
-  top: 107px;
-  position: absolute;
   justify-content: center;
   display: flex;
   flex-direction: column;
@@ -307,10 +279,7 @@
 
 .example-text {
   width: 165px;
-  left: 8px;
-  top: 120px;
   line-height: 10px;
-  position: absolute;
   justify-content: center;
   display: flex;
   flex-direction: column;
@@ -333,10 +302,7 @@
 
 .synonyms {
   width: 165px;
-  height: 10px;
-  left: 8px;
-  top: 150px;
-  position: absolute;
+  height: 15px;
   justify-content: center;
   display: flex;
   flex-direction: column;
@@ -348,9 +314,6 @@
 
 .chip-text {
   width: 26px;
-  left: 8px;
-  top: 160px;
-  position: absolute;
   text-align: center;
   justify-content: center;
   display: flex;
@@ -359,74 +322,11 @@
   font-size: 9px;
   font-weight: 400;
   word-wrap: break-word;
-}
-
-.chip-border {
-  width: 26px;
-  height: 12px;
-  left: 8px;
-  top: 165px;
-  position: absolute;
-  border-radius: 5px;
-  border: 0.5px solid #7a91dd;
-}
-
-.chip-2-text {
-  width: 59px;
-  left: 39px;
-  top: 160px;
-  position: absolute;
-  text-align: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  color: #202124;
-  font-size: 9px;
-  font-weight: 400;
-  word-wrap: break-word;
-}
-
-.chip-2-border {
-  width: 59px;
-  height: 12px;
-  left: 39px;
-  top: 165px;
-  position: absolute;
-  border-radius: 5px;
-  border: 0.5px solid #7a91dd;
-}
-
-.chip-3-text {
-  width: 53px;
-  left: 103px;
-  top: 160px;
-  position: absolute;
-  text-align: center;
-  justify-content: center;
-  display: flex;
-  flex-direction: column;
-  color: #202124;
-  font-size: 9px;
-  font-weight: 400;
-  word-wrap: break-word;
-}
-
-.chip-3-border {
-  width: 53px;
-  height: 12px;
-  left: 103px;
-  top: 165px;
-  position: absolute;
-  border-radius: 5px;
-  border: 0.5px solid #7a91dd;
 }
 
 /* responsive chips container for synonyms */
 .chips {
   width: 165px;
-  position: absolute;
-  left: 8px;
-  top: 165px;
   display: flex;
   flex-direction: row;
   gap: 5px;
@@ -549,16 +449,18 @@
 
 /* center any direct img inside icon-slot */
 .icon-slot > img {
-  position: absolute;
-  left: 50%;
-  top: 50%;
   transform: translate(-50%, -50%);
   width: 10px; /* size to fit inside the 16px circle with padding */
   height: 10px;
   object-fit: contain;
+  position: relative;
+  left: 8px;
+  top: 2.5px;
 }
 
-.icon-slot.recording { filter: hue-rotate(10deg) saturate(1.1); }
+.icon-slot.recording {
+  filter: hue-rotate(10deg) saturate(1.1);
+}
 .mic-recording-indicator {
   position: absolute;
   right: -2px;
@@ -572,35 +474,42 @@
 }
 
 @keyframes mic-pulse {
-  0% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.4); opacity: 0.6; }
-  100% { transform: scale(1); opacity: 1; }
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.4);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
-.user-pronunciation { width: 165px; }
-.ipa-row { display:flex; gap:6px; align-items:center; margin-bottom:4px; }
-.ipa-label { color: #5f6368; font-size:8px; }
-.ipa-value { color: #202124; font-size:9px; }
-.ipa-score { margin-top:4px; font-size:9px; color:#7a91dd; }
-
-/* New scrollable content area under the pronunciation info */
-.card-content {
-  position: absolute;
-  left: 8px;
-  top: 86px; /* start below the IPA block */
+.user-pronunciation {
   width: 165px;
-  height: 100px; /* allow scrolling within this area */
-  overflow-y: auto;
-  padding-right: 6px; /* room for scrollbar */
 }
-
-/* reduce absolute offsets for items previously placed lower */
-.definition { left: 0; top: 0; position: static; width: 100%; height: auto; }
-.label { left: 0; top: 0; position: static; width: 100%; }
-.example { left: 0; top: 0; position: static; width: 100%; }
-.example-text { left: 0; top: 0; position: static; width: 100%; }
-.synonyms { left: 0; top: 0; position: static; width: 100%; }
-.chips { position: static; display:flex; gap:8px; flex-wrap:wrap; }
+.ipa-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.ipa-label {
+  color: #5f6368;
+  font-size: 8px;
+}
+.ipa-value {
+  color: #202124;
+  font-size: 9px;
+}
+.ipa-score {
+  margin-top: 4px;
+  font-size: 9px;
+  color: #7a91dd;
+}
 
 /* Full-card skeleton (single block covering the card) */
 .card-full-skeleton {

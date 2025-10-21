@@ -149,7 +149,8 @@ export default function Card({ selected }: CardProps) {
     setTargetIPA('');
     setPronScore(null);
     setRecording(true);
-    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
+    const SpeechRecognition =
+      (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
     if (!SpeechRecognition) {
       console.warn('SpeechRecognition not supported');
       setRecording(false);
@@ -191,7 +192,9 @@ export default function Card({ selected }: CardProps) {
     if (ev && typeof (ev as any).preventDefault === 'function') (ev as any).preventDefault();
     try {
       if (recognitionRef.current) {
-        try { recognitionRef.current.stop(); } catch (_) { }
+        try {
+          recognitionRef.current.stop();
+        } catch (_) {}
       }
     } catch (e) {
       console.error('Error stopping recognition', e);
@@ -203,7 +206,11 @@ export default function Card({ selected }: CardProps) {
     // Ask the model for IPA of both the target and the user's utterance and a similarity score
     setLoading(true);
     try {
-      const params = { initialPrompts: [{ role: 'system', content: 'You are a helpful assistant. Return concise JSON.' }] };
+      const params = {
+        initialPrompts: [
+          { role: 'system', content: 'You are a helpful assistant. Return concise JSON.' },
+        ],
+      };
       const promptText = `Given the target word: "${selected}" and the user's spoken utterance (transcript): "${finalTranscript}", return JSON only with keys: targetIPA (IPA for the target word), userIPA (IPA for the user's utterance), similarity (0-100 integer where 100 means identical), match (true/false if pronunciation matches). Example: {"targetIPA":"/.../","userIPA":"/.../","similarity":85,"match":false}`;
       const response = await runPrompt(promptText, params, {});
       console.log('pronunciation response', response);
@@ -222,7 +229,13 @@ export default function Card({ selected }: CardProps) {
       if (parsed) {
         setTargetIPA(parsed.targetIPA || parsed.target_ipa || '');
         setUserIPA(parsed.userIPA || parsed.user_ipa || '');
-        setPronScore(typeof parsed.similarity === 'number' ? parsed.similarity : (parsed.similarity ? Number(parsed.similarity) : null));
+        setPronScore(
+          typeof parsed.similarity === 'number'
+            ? parsed.similarity
+            : parsed.similarity
+              ? Number(parsed.similarity)
+              : null
+        );
       } else {
         // fallback: ask model to provide IPA from transcript text directly
         // (we can call runPrompt again with a different prompt, but for now set userIPA to transcript)
@@ -248,23 +261,19 @@ export default function Card({ selected }: CardProps) {
         <div className="card-panel" />
 
         <div className="card-body">
-          <div className="header-area">
-            <div className="left-header">
-              <div className="card-header">
-                <div className="card-header-inner">
-                  <span className="card-title">{selected}</span>
-                  <span className="card-subtle">{part}</span>
-                  <span className="card-subtle">
-                    <img src={HeartSVG} />
-                  </span>
-                </div>
-              </div>
+          <div className="card-header">
+            <span className="card-title">{selected}</span>
+            <span className="card-subtle">{part}</span>
+            <span className="card-subtle">
+              <img src={HeartSVG} />
+            </span>
+          </div>
 
-              <div className="phonetic">
-                <span className="phonetic-text">{phon}</span>
-                <span className="phonetic-spacer"> </span>
-              </div>
-
+          <div className="phonetic-group">
+            <div className="phonetic">
+              <span className="phonetic-text">{phon}</span>
+            </div>
+            {/*
               <div className="user-pronunciation">
                 <div className="ipa-row">
                   <span className="ipa-label">Target IPA:</span>
@@ -278,8 +287,8 @@ export default function Card({ selected }: CardProps) {
                   <div className="ipa-score">Score: {pronScore}</div>
                 )}
               </div>
-            </div>
 
+                */}
             <div className="icons-group">
               <div
                 className={`icon-slot pos-1${recording ? ' recording' : ''}`}
@@ -287,7 +296,7 @@ export default function Card({ selected }: CardProps) {
                 onMouseUp={stopListening}
               >
                 <div className="icon-slot circle" />
-                <img src={MicSVG} className="icon-inner" />
+                <img src={MicSVG} />
                 {recording && <div className="mic-recording-indicator" />}
               </div>
 
@@ -297,12 +306,15 @@ export default function Card({ selected }: CardProps) {
               </div>
             </div>
           </div>
-
-          <div className="card-scroll">
+          <div className="definition-group">
             <div className="label">Definition</div>
             <div className="definition">{def}</div>
+          </div>
+          <div className="example-group">
             <div className="example">Example Sentence</div>
             <div className="example-text">"{example}”</div>
+          </div>
+          <div className="synonyms-group">
             <div className="synonyms">Synonyms</div>
             <div className="chips">
               {syns && syns.length > 0 ? (
