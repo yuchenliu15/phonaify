@@ -11,43 +11,18 @@ interface CardProps {
 
 const DEF_SCHMEA = {
   type: 'object',
-  description: 'A comprehensive definition object for a single word.', // Optional: Describe the whole object
+  description: 'A comprehensive definition object for a single word.',
   properties: {
-    synonyms: {
-      type: 'array',
-      description: 'A list of up to 3 words that have the same or similar meaning.', // Hint/Explanation
-      maxItems: 3, // Hard limit on the number of items
-      items: {
-        type: 'string',
-        description: 'A single synonym word.',
-      },
-    },
-    definition: {
-      type: 'string',
-      description:
-        'A very short explanation of the word’s meaning, limited to 15 words. You must limit to 15 words.', // Hint for word count
-      maxLength: 75,
-    },
-    exampleSentence: {
-      type: 'string',
-      description: 'A short sentence using the word, limited to 15 words.', // Hint for word count
-      maxLength: 75,
-    },
-    phoneticAlphabet: {
-      type: 'string',
-      description:
-        'The phonetic spelling of the word using the International Phonetic Alphabet (IPA).', // Hint/Explanation
-    },
-    partsOfSpeech: {
-      type: 'string',
-      description: 'The grammatical category of the word (e.g., noun, verb, adjective).', // Hint/Explanation
-      enum: ['noun', 'verb', 'adjective', 'adverb', 'preposition', 'conjunction', 'interjection'], // Optional: Restrict possible values
-    },
+    synonyms: { type: 'array' },
+    definition: { type: 'string' },
+    exampleSentence: { type: 'string' },
+    phoneticAlphabet: { type: 'string' },
+    partsOfSpeech: { type: 'string' },
   },
 };
 
 export default function Card({ selected }: CardProps) {
-  const session = useRef(null);
+  const session = useRef<any>(null);
   const [loading, setLoading] = useState(true);
   const [recording, setRecording] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -61,44 +36,24 @@ export default function Card({ selected }: CardProps) {
   const [part, setPart] = useState('');
   const [example, setExample] = useState('');
 
-  const onSpeakerClick = () => {
-    // 1. Check for browser support
-    if ('speechSynthesis' in window) {
-      // 2. Create a new utterance object
-      const utterance = new SpeechSynthesisUtterance(selected);
-
-      // Optional: Set properties for pronunciation control
-      utterance.rate = 1; // Speed (0.1 to 10)
-      utterance.pitch = 1.2; // Pitch (0 to 2)
-      // utterance.voice = /* choose from speechSynthesis.getVoices() */;
-
-      // 3. Speak the word
-      window.speechSynthesis.speak(utterance);
-    } else {
-      alert('Your browser does not support the Web Speech API.');
-    }
-  };
-
-  // microphone click/hold handled by startListening/stopListening
-
   const removeSession = () => {
     if (session.current) {
-      session.current.destroy();
+      try {
+        session.current.destroy();
+      } catch (_) {}
+      session.current = null;
     }
   };
 
-  async function runPrompt(prompt, params, schema = {}) {
-    console.log('runPromp() called with schema: ', schema);
+  async function runPrompt(prompt: string, params: any, schema: any = {}) {
     try {
       if (!session.current) {
-        session.current = await LanguageModel.create(params);
+        // LanguageModel is assumed to be provided globally in this project
+        session.current = await (LanguageModel as any).create(params);
       }
       return session.current.prompt(prompt, { responseConstraint: schema });
     } catch (e) {
-      console.log('Prompt failed');
-      console.error(e);
-      console.log('Prompt:', prompt);
-      // Reset session
+      console.error('Prompt failed', e);
       removeSession();
       throw e;
     }
@@ -110,27 +65,24 @@ export default function Card({ selected }: CardProps) {
       setLoading(true);
       try {
         const params = {
-          initialPrompts: [
-            {
-              role: 'system',
-              content:
-                'You are a helpful and friendly assistant who gives short and concise answers.',
-            },
-          ],
+          initialPrompts: [{ role: 'system', content: 'You are a helpful assistant.' }],
         };
         const response = await runPrompt('Give definition of ' + selected, params, DEF_SCHMEA);
-        console.log('card prompt');
-        console.log(response);
-        const parsed = JSON.parse(response);
-        setSyns(parsed['synonyms']);
-        setPart(parsed['partsOfSpeech']);
-        setExample(parsed['exampleSentence']);
-        setDef(parsed['definition']);
-        setPhon(parsed['phoneticAlphabet']);
-
-        if (mounted) setLoading(false);
+        try {
+          const parsed = typeof response === 'string' ? JSON.parse(response) : response;
+          setSyns(parsed.synonyms || []);
+          setPart(parsed.partsOfSpeech || '');
+          setExample(parsed.exampleSentence || '');
+          setDef(parsed.definition || '');
+          setPhon(parsed.phoneticAlphabet || '');
+        } catch (e) {
+          // fallback: use raw response
+          console.warn('Failed parsing response', e);
+          setDef(typeof response === 'string' ? response : JSON.stringify(response));
+        }
       } catch (e) {
         console.error(e);
+      } finally {
         if (mounted) setLoading(false);
       }
     };
@@ -141,9 +93,8 @@ export default function Card({ selected }: CardProps) {
     };
   }, [selected]);
 
-  // Start speech recognition (hold-to-record). Uses Web Speech API when available.
   const startListening = (ev?: React.MouseEvent | React.TouchEvent) => {
-    if (ev && typeof (ev as any).preventDefault === 'function') (ev as any).preventDefault();
+    ev && (ev as any).preventDefault?.();
     setTranscript('');
     setUserIPA('');
     setTargetIPA('');
@@ -175,10 +126,7 @@ export default function Card({ selected }: CardProps) {
         console.error('SpeechRecognition error', e);
         setRecording(false);
       };
-      r.onend = () => {
-        // onend will fire after stop(); keep recording state false
-        setRecording(false);
-      };
+      r.onend = () => setRecording(false);
       recognitionRef.current = r;
       r.start();
     } catch (e) {
@@ -187,23 +135,14 @@ export default function Card({ selected }: CardProps) {
     }
   };
 
-  // Stop listening and send transcript to model to get IPA and similarity
   const stopListening = async (ev?: React.MouseEvent | React.TouchEvent) => {
-    if (ev && typeof (ev as any).preventDefault === 'function') (ev as any).preventDefault();
+    ev && (ev as any).preventDefault?.();
     try {
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.stop();
-        } catch (_) {}
-      }
-    } catch (e) {
-      console.error('Error stopping recognition', e);
-    }
+      recognitionRef.current?.stop?.();
+    } catch (_) {}
     setRecording(false);
     const finalTranscript = transcript.trim();
     if (!finalTranscript) return;
-
-    // Ask the model for IPA of both the target and the user's utterance and a similarity score
     setLoading(true);
     try {
       const params = {
@@ -211,9 +150,8 @@ export default function Card({ selected }: CardProps) {
           { role: 'system', content: 'You are a helpful assistant. Return concise JSON.' },
         ],
       };
-      const promptText = `Given the target word: "${selected}" and the user's spoken utterance (transcript): "${finalTranscript}", return JSON only with keys: targetIPA (IPA for the target word), userIPA (IPA for the user's utterance), similarity (0-100 integer where 100 means identical), match (true/false if pronunciation matches). Example: {"targetIPA":"/.../","userIPA":"/.../","similarity":85,"match":false}`;
+      const promptText = `Given the target word: "${selected}" and the user's spoken utterance (transcript): "${finalTranscript}", return JSON only with keys: targetIPA, userIPA, similarity (0-100), match (true/false)`;
       const response = await runPrompt(promptText, params, {});
-      console.log('pronunciation response', response);
       let parsed: any = null;
       try {
         parsed = typeof response === 'string' ? JSON.parse(response) : response;
@@ -222,7 +160,7 @@ export default function Card({ selected }: CardProps) {
           const str = typeof response === 'string' ? response : JSON.stringify(response);
           const m = str.match(/\{[\s\S]*\}/);
           parsed = m ? JSON.parse(m[0]) : null;
-        } catch (_e) {
+        } catch (_) {
           parsed = null;
         }
       }
@@ -237,8 +175,6 @@ export default function Card({ selected }: CardProps) {
               : null
         );
       } else {
-        // fallback: ask model to provide IPA from transcript text directly
-        // (we can call runPrompt again with a different prompt, but for now set userIPA to transcript)
         setUserIPA(finalTranscript);
       }
     } catch (err) {
@@ -248,72 +184,71 @@ export default function Card({ selected }: CardProps) {
     }
   };
 
+  const onSpeakerClick = () => {
+    if ('speechSynthesis' in window) {
+      const utterance = new SpeechSynthesisUtterance(selected);
+      utterance.rate = 1;
+      utterance.pitch = 1.2;
+      window.speechSynthesis.speak(utterance);
+    } else alert('Your browser does not support the Web Speech API.');
+  };
+
   return (
-    <>
-      <div className={`card-root${loading ? ' loading' : ''}`}>
-        {loading && (
-          <div className="card-full-skeleton" aria-hidden>
-            <div className="card-full-shimmer" />
-          </div>
-        )}
-        {/* keep props.msg referenced so lint/TS doesn't mark it unused */}
-        <div className="card-gradient" />
-        <div className="card-panel" />
+    <div className={`card-root${loading ? ' loading' : ''}`}>
+      {loading && (
+        <div className="card-full-skeleton" aria-hidden>
+          <div className="card-full-shimmer" />
+        </div>
+      )}
+      <div className="card-gradient" />
+      <div className="card-panel" />
 
-        <div className="card-body">
-          <div className="card-header">
-            <span className="card-title">{selected}</span>
-            <span className="card-subtle">{part}</span>
-            <span className="card-subtle">
-              <img src={HeartSVG} />
-            </span>
-          </div>
+      <div className="card-body">
+        <div className="card-header">
+          <span className="card-title">{selected}</span>
+          <span className="card-subtle">{part}</span>
+          <span className="card-subtle">
+            <img src={HeartSVG} />
+          </span>
+        </div>
 
-          <div className="phonetic-group">
-            <div className="phonetic">
-              <span className="phonetic-text">{phon}</span>
+        <div className="phonetic-group">
+          <div className="phonetic">
+            <span className="phonetic-text">{phon}</span>
+          </div>
+          <div className="icons-group">
+            <div
+              className={`icon-slot pos-1${recording ? ' recording' : ''}`}
+              onMouseDown={startListening}
+              onMouseUp={stopListening}
+              onTouchStart={startListening}
+              onTouchEnd={stopListening}
+            >
+              <div className="icon-slot circle" />
+              <img src={MicSVG} className="icon-inner" />
+              {recording && <div className="mic-recording-indicator" />}
             </div>
-            {/*
-              <div className="user-pronunciation">
-                <div className="ipa-row">
-                  <span className="ipa-label">Target IPA:</span>
-                  <span className="ipa-value">{targetIPA || phon}</span>
-                </div>
-                <div className="ipa-row">
-                  <span className="ipa-label">Your IPA:</span>
-                  <span className="ipa-value">{userIPA || (transcript ? transcript : '—')}</span>
-                </div>
-                {pronScore !== null && (
-                  <div className="ipa-score">Score: {pronScore}</div>
-                )}
-              </div>
 
-                */}
-            <div className="icons-group">
-              <div
-                className={`icon-slot pos-1${recording ? ' recording' : ''}`}
-                onMouseDown={startListening}
-                onMouseUp={stopListening}
-              >
-                <div className="icon-slot circle" />
-                <img src={MicSVG} />
-                {recording && <div className="mic-recording-indicator" />}
-              </div>
-
-              <div className="icon-slot pos-2" onClick={onSpeakerClick}>
-                <div className="icon-slot circle" />
-                <img src={SpeakerSVG} />
-              </div>
+            <div className="icon-slot pos-2" onClick={onSpeakerClick}>
+              <div className="icon-slot circle" />
+              <img src={SpeakerSVG} className="icon-inner" />
             </div>
           </div>
+        </div>
+
+        <div className="analyze" />
+
+        <div className="card-scroll">
           <div className="definition-group">
             <div className="label">Definition</div>
             <div className="definition">{def}</div>
           </div>
+
           <div className="example-group">
             <div className="example">Example Sentence</div>
-            <div className="example-text">"{example}”</div>
+            <div className="example-text">"{example}"</div>
           </div>
+
           <div className="synonyms-group">
             <div className="synonyms">Synonyms</div>
             <div className="chips">
@@ -329,25 +264,14 @@ export default function Card({ selected }: CardProps) {
             </div>
           </div>
         </div>
-        {/* 
-        <div className="small-square">
-          <div className="small-square-inner">
-            <div className="small-square-fill" />
-          </div>
-        </div>
-        */}
-        {/*
-        <div className="top-right-dot">
-          <img src={CrossSVG} />
-        </div>
-        */}
-        <div className="word-library">
-          <div className="label">Word Library</div>
-          <div className="small-rect">
-            <div className="fill" />
-          </div>
+      </div>
+
+      <div className="word-library">
+        <div className="label">Word Library</div>
+        <div className="small-rect">
+          <div className="fill" />
         </div>
       </div>
-    </>
+    </div>
   );
 }

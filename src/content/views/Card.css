@@ -128,16 +128,50 @@
 }
 
 .card-body {
-  gap: 6px;
+  gap: 5px;
   position: absolute;
   left: 0px;
   top: 1px;
   width: 181px;
+  height: 200px;
   display: flex;
   flex-direction: column;
-  padding: 8px;
   box-sizing: border-box;
-  pointer-events: none; /* allow specific children to accept pointer events */
+  pointer-events: auto;
+  overflow-y: auto; /* whole-card vertical scrolling */
+  overflow-x: hidden; /* prevent horizontal scrolling */
+  -webkit-overflow-scrolling: touch;
+  /* Reserve space for the scrollbar so it doesn't overlap content */
+  scrollbar-gutter: stable both-edges;
+  padding-right: 12px; /* room for scrollbar (fallback for browsers without scrollbar-gutter) */
+  padding-top: 7px;
+  scrollbar-width: thin; /* Firefox: make scrollbar thinner */
+  scrollbar-color: rgba(0, 0, 0, 0.12) transparent; /* Firefox thumb + track */
+}
+
+/* dedicated scrolling container for the card's lower content */
+.card-scroll {
+  flex: 1 1 auto;
+  min-height: 0; /* lets flex child shrink */
+  overflow-y: visible; /* let the whole body handle scrolling */
+}
+
+/* WebKit scrollbar styling (Chrome, Edge, Safari) - thin and subtle */
+.card-body::-webkit-scrollbar {
+  width: 12px;
+  background: transparent;
+}
+.card-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+.card-body::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  border: 3px solid transparent; /* spacing so thumb doesn't overlay content */
+  background-clip: content-box;
+}
+.card-body::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(0, 0, 0, 0.18);
 }
 
 .icons-group {
@@ -240,23 +274,34 @@
   font-size: 15px;
 }
 
+.analyze {
+  width: 100%;
+  height: 55px;
+  flex-shrink: 0;
+  border-radius: 5px;
+  border: 0.5px solid #e0e0e0;
+  background: #fff;
+  box-shadow: 1px 1px 3.3px 0 rgba(0, 0, 0, 0.25);
+}
+
 .definition-group {
+  margin: 2px;
 }
 .definition {
-  width: 165px;
-  line-height: 10px;
-  justify-content: center;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 14px;
   display: flex;
   flex-direction: column;
   color: #202124;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 400;
   word-wrap: break-word;
 }
 
 .label {
-  width: 165px;
-  height: 11px;
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   color: #5f6368;
@@ -264,27 +309,30 @@
   font-weight: 400;
   word-wrap: break-word;
 }
-
+.example-group {
+  margin: 2px;
+}
 .example {
-  width: 165px;
-  height: 13px;
+  width: 100%;
+  box-sizing: border-box;
   justify-content: center;
   display: flex;
   flex-direction: column;
   color: #5f6368;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 400;
   word-wrap: break-word;
 }
 
 .example-text {
-  width: 165px;
-  line-height: 10px;
+  width: 100%;
+  box-sizing: border-box;
+  line-height: 14px;
   justify-content: center;
   display: flex;
   flex-direction: column;
   color: #202124;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 400;
   word-wrap: break-word;
 }
@@ -301,13 +349,14 @@
 }
 
 .synonyms {
-  width: 165px;
-  height: 15px;
+  width: 100%;
+  height: 17px;
+  box-sizing: border-box;
   justify-content: center;
   display: flex;
   flex-direction: column;
   color: #5f6368;
-  font-size: 8px;
+  font-size: 9px;
   font-weight: 400;
   word-wrap: break-word;
 }
@@ -326,12 +375,13 @@
 
 /* responsive chips container for synonyms */
 .chips {
-  width: 165px;
+  width: 100%;
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  gap: 5px;
+  gap: 6px;
   align-items: center;
-  max-width: 165px;
+  max-width: 100%;
   flex-wrap: wrap;
 }
 
