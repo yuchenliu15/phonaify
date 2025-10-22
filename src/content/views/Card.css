@@ -285,8 +285,9 @@
 }
 
 .definition-group {
-  margin: 2px;
+  margin-top: 2px;
 }
+
 .definition {
   width: 100%;
   box-sizing: border-box;
@@ -310,7 +311,7 @@
   word-wrap: break-word;
 }
 .example-group {
-  margin: 2px;
+  margin-top: 4px;
 }
 .example {
   width: 100%;
@@ -319,7 +320,7 @@
   display: flex;
   flex-direction: column;
   color: #5f6368;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
 }
@@ -348,6 +349,10 @@
   text-decoration: underline;
 }
 
+.synonyms-group {
+  margin-top: 2px;
+}
+
 .synonyms {
   width: 100%;
   height: 17px;
@@ -356,7 +361,7 @@
   display: flex;
   flex-direction: column;
   color: #5f6368;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
 }
