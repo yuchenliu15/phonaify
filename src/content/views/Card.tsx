@@ -1,13 +1,30 @@
 import './Card.css';
 import HeartSVG from '@/assets/heart.svg';
-import CrossSVG from '@/assets/cross.svg';
+// CrossSVG intentionally removed (unused) to avoid lint errors
 import SpeakerSVG from '@/assets/speaker.svg';
 import MicSVG from '@/assets/mic.svg';
 import { useEffect, useRef, useState } from 'react';
 
+// Minimal ambient declaration for the external LanguageModel global used in this project.
+declare global {
+  interface LanguageModelType {
+    create: (opts?: any) => Promise<any>;
+    params?: () => Promise<any>;
+  }
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  var LanguageModel: LanguageModelType;
+}
+
 interface CardProps {
   selected: string;
 }
+
+const ANALYZING = 'Analyzing your pronunciation...';
+const INCORRECT = "You're almost correct, try again!";
+const CORRECT = 'Perfect score!';
+const INIT = 'Try recording pronunciation w/ mic :)';
+
+type Status = typeof ANALYZING | typeof INCORRECT | typeof CORRECT | typeof INIT;
 
 const DEF_SCHMEA = {
   type: 'object',
@@ -21,15 +38,22 @@ const DEF_SCHMEA = {
   },
 };
 
+// AUDIO_SCHEMA will be created inside the recording handler to include the current `selected` word.
+
 export default function Card({ selected }: CardProps) {
   const session = useRef<any>(null);
   const [loading, setLoading] = useState(true);
   const [recording, setRecording] = useState(false);
-  const [transcript, setTranscript] = useState('');
-  const recognitionRef = useRef<any>(null);
+  const [elapsedMs, setElapsedMs] = useState(0);
+  // Media recording refs
+  const mediaStreamRef = useRef<MediaStream | null>(null);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const recordTimerRef = useRef<number | null>(null);
+  const stopTimeoutRef = useRef<number | null>(null);
+  const [status, setStatus] = useState<Status>(INIT);
   const [userIPA, setUserIPA] = useState('');
-  const [targetIPA, setTargetIPA] = useState('');
-  const [pronScore, setPronScore] = useState<number | null>(null);
+  const [pronScore, setPronScore] = useState<number>(0);
   const [syns, setSyns] = useState<string[]>([]);
   const [def, setDef] = useState('');
   const [phon, setPhon] = useState('');
@@ -93,79 +117,177 @@ export default function Card({ selected }: CardProps) {
     };
   }, [selected]);
 
-  const startListening = (ev?: React.MouseEvent | React.TouchEvent) => {
+  // Recording constraints
+  const MAX_RECORDING_MS = 10000; // upper bound: 10s
+  const MIN_RECORDING_MS = 200; // ignore very short clips
+
+  const startListening = async (ev?: React.MouseEvent | React.TouchEvent) => {
     ev && (ev as any).preventDefault?.();
-    setTranscript('');
     setUserIPA('');
-    setTargetIPA('');
     setPronScore(null);
+    setElapsedMs(0);
     setRecording(true);
-    const SpeechRecognition =
-      (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    if (!SpeechRecognition) {
-      console.warn('SpeechRecognition not supported');
-      setRecording(false);
-      return;
-    }
+    chunksRef.current = [];
+
     try {
-      const r = new SpeechRecognition();
-      r.lang = 'en-US';
-      r.interimResults = true;
-      r.maxAlternatives = 1;
-      r.onresult = (event: any) => {
-        let interim = '';
-        let final = '';
-        for (let i = 0; i < event.results.length; i++) {
-          const res = event.results[i];
-          if (res.isFinal) final += res[0].transcript + ' ';
-          else interim += res[0].transcript + ' ';
-        }
-        setTranscript((final || interim).trim());
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaStreamRef.current = stream;
+
+      const options: MediaRecorderOptions = {};
+      // try to pick a common mimeType if available
+      if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+        options.mimeType = 'audio/webm;codecs=opus';
+      } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+        options.mimeType = 'audio/mp4';
+      }
+
+      const recorder = new MediaRecorder(stream, options);
+      recorderRef.current = recorder;
+
+      recorder.ondataavailable = ({ data }) => {
+        if (data && data.size > 0) chunksRef.current.push(data);
       };
-      r.onerror = (e: any) => {
-        console.error('SpeechRecognition error', e);
-        setRecording(false);
-      };
-      r.onend = () => setRecording(false);
-      recognitionRef.current = r;
-      r.start();
-    } catch (e) {
-      console.error('Failed to start SpeechRecognition', e);
+
+      recorder.onerror = (e) => console.error('MediaRecorder error', e);
+
+      recorder.start();
+
+      // timer to update elapsedMs
+      const startTs = Date.now();
+      recordTimerRef.current = window.setInterval(() => {
+        setElapsedMs(Date.now() - startTs);
+      }, 100);
+
+      // auto-stop at upper bound
+      stopTimeoutRef.current = window.setTimeout(() => {
+        // trigger the same stop flow
+        stopListening();
+      }, MAX_RECORDING_MS);
+    } catch (err) {
+      console.error('Failed to start recording', err);
       setRecording(false);
+      setElapsedMs(0);
     }
   };
 
   const stopListening = async (ev?: React.MouseEvent | React.TouchEvent) => {
     ev && (ev as any).preventDefault?.();
-    try {
-      recognitionRef.current?.stop?.();
-    } catch (_) {}
+    if (!recorderRef.current) {
+      setRecording(false);
+      setElapsedMs(0);
+      return;
+    }
+
+    // stop timers and recorder
+    if (stopTimeoutRef.current) {
+      clearTimeout(stopTimeoutRef.current);
+      stopTimeoutRef.current = null;
+    }
+    if (recordTimerRef.current) {
+      clearInterval(recordTimerRef.current);
+      recordTimerRef.current = null;
+    }
+
+    const recorder = recorderRef.current;
+    const stream = mediaStreamRef.current;
+    recorderRef.current = null;
+
+    await new Promise<void>((resolve) => {
+      recorder.onstop = () => resolve();
+      try {
+        recorder.state !== 'inactive' && recorder.stop();
+      } catch (_) {
+        resolve();
+      }
+    });
+
     setRecording(false);
-    const finalTranscript = transcript.trim();
-    if (!finalTranscript) return;
-    setLoading(true);
+    const elapsed = elapsedMs;
+    setElapsedMs(0);
+
+    // stop tracks
     try {
-      const params = {
-        initialPrompts: [
-          { role: 'system', content: 'You are a helpful assistant. Return concise JSON.' },
+      stream?.getTracks().forEach((t) => t.stop());
+    } catch (_) {}
+    mediaStreamRef.current = null;
+
+    // assemble blob
+    const blob = new Blob(chunksRef.current, { type: recorder.mimeType || 'audio/webm' });
+    chunksRef.current = [];
+
+    if (elapsed < MIN_RECORDING_MS) {
+      console.warn('Recording too short, ignoring');
+      return;
+    }
+
+    // send to LanguageModel
+    setStatus(ANALYZING);
+    try {
+      const arrayBuffer = await blob.arrayBuffer();
+
+      // create a session for audio expected input
+      let audioSession: any = null;
+      try {
+        // prefer to use LanguageModel.params if available
+        const lm = LanguageModel as any;
+        let createParams: any = { expectedInputs: [{ type: 'audio' }] };
+        if (typeof lm?.params === 'function') {
+          try {
+            const p = await lm.params();
+            if (p?.defaultTopK) createParams.topK = p.defaultTopK;
+          } catch (_) {}
+        }
+        audioSession = await lm.create(createParams);
+      } catch (e) {
+        console.warn('Failed to create audio session with params, falling back', e);
+        audioSession = await (LanguageModel as any).create({ expectedInputs: [{ type: 'audio' }] });
+      }
+
+      const promptText = `Analyze this user audio and give phonetic of user's pronunciation and put it in userIPA". Return JSON only with keys:userIPA,). Be concise.`;
+
+      // Request the model synchronously (no streaming) since we already assemble the audio
+      let collected: any = null;
+      // build a local schema for this call that includes the specific selected target
+      const callSchema = {
+        type: 'object',
+        description: `International Phonetic Alphabet of user input audio (userIPA)`,
+        properties: {
+          userIPA: { type: 'string' },
+        },
+        required: ['userIPA'],
+      } as const;
+
+      const response = await audioSession.prompt(
+        [
+          {
+            role: 'user',
+            content: [
+              { type: 'text', value: promptText },
+              { type: 'audio', value: arrayBuffer },
+            ],
+          },
         ],
-      };
-      const promptText = `Given the target word: "${selected}" and the user's spoken utterance (transcript): "${finalTranscript}", return JSON only with keys: targetIPA, userIPA, similarity (0-100), match (true/false)`;
-      const response = await runPrompt(promptText, params, {});
+        { responseConstraint: callSchema }
+      );
+
+      if (typeof response === 'string') collected = response;
+      else if (response?.content) collected = String(response.content);
+      else collected = typeof response === 'object' ? JSON.stringify(response) : String(response);
+
+      // try to parse JSON from collected string
       let parsed: any = null;
       try {
-        parsed = typeof response === 'string' ? JSON.parse(response) : response;
+        parsed = typeof collected === 'string' ? JSON.parse(collected) : collected;
       } catch (e) {
         try {
-          const str = typeof response === 'string' ? response : JSON.stringify(response);
-          const m = str.match(/\{[\s\S]*\}/);
+          const m = String(collected).match(/\{[\s\S]*\}/);
           parsed = m ? JSON.parse(m[0]) : null;
         } catch (_) {
           parsed = null;
         }
       }
+
       if (parsed) {
-        setTargetIPA(parsed.targetIPA || parsed.target_ipa || '');
         setUserIPA(parsed.userIPA || parsed.user_ipa || '');
         setPronScore(
           typeof parsed.similarity === 'number'
@@ -174,11 +296,16 @@ export default function Card({ selected }: CardProps) {
               ? Number(parsed.similarity)
               : null
         );
+        setStatus(parsed.match ? CORRECT : INCORRECT);
       } else {
-        setUserIPA(finalTranscript);
+        // fallback: show that analysis failed
+        setUserIPA('—');
+        setPronScore(0);
+        setStatus(INCORRECT);
       }
     } catch (err) {
-      console.error('Failed to get pronunciation from model', err);
+      console.error('Failed to analyze audio', err);
+      setStatus(INIT);
     } finally {
       setLoading(false);
     }
@@ -236,7 +363,16 @@ export default function Card({ selected }: CardProps) {
           </div>
         </div>
 
-        <div className="analyze" />
+        <div className="analyze">
+          <span className="status">{status}</span>
+          {(status === INCORRECT || status == CORRECT) && (
+            <div className="scores">
+              <div className="content-left">{userIPA}</div>
+              <div className="vertical-divider"></div>
+              <div className="content-right">{pronScore * 100}%</div>
+            </div>
+          )}
+        </div>
 
         <div className="card-scroll">
           <div className="definition-group">
