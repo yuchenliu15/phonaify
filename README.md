@@ -1,14 +1,9 @@
-# React + Vite + CRXJS
+# Phonaify
 
-This template helps you quickly start developing Chrome extensions with React, TypeScript and Vite. It includes the CRXJS Vite plugin for seamless Chrome extension development.
-
-## Features
-
-- React with TypeScript
-- TypeScript support
-- Vite build tool
-- CRXJS Vite plugin integration
-- Chrome extension manifest configuration
+### todo
+1. audio input
+2. speaker speed
+3. word list
 
 ## Quick Start
 
