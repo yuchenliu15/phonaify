@@ -257,6 +257,15 @@ export default function Card({ selected }: CardProps) {
         required: ['userIPA'],
       } as const;
 
+      const simSchema = {
+        type: 'object',
+        description: `I want to see if I'm pronuncing the word correctly. Similarity score (0 to 100) measures how similar the word pronunciation of user audio is to actual word '${selected}'. Use pronunciation and International Phonetic Alphabet to compare also, i.e. how close is IPA of user pronunciation to standard IPA of the word.`,
+        properties: {
+          similarity: { type: 'number' },
+        },
+        required: ['similarity'],
+      } as const;
+
       const response = await audioSession.prompt(
         [
           {
@@ -270,14 +279,29 @@ export default function Card({ selected }: CardProps) {
         { responseConstraint: callSchema }
       );
 
+      const responseSim = await audioSession.prompt(
+        [
+          {
+            role: 'user',
+            content: [
+              { type: 'text', value: promptText },
+              { type: 'audio', value: arrayBuffer },
+            ],
+          },
+        ],
+        { responseConstraint: simSchema}
+      );
+
       if (typeof response === 'string') collected = response;
       else if (response?.content) collected = String(response.content);
       else collected = typeof response === 'object' ? JSON.stringify(response) : String(response);
 
       // try to parse JSON from collected string
       let parsed: any = null;
+      let parsedSim: any = null;
       try {
         parsed = typeof collected === 'string' ? JSON.parse(collected) : collected;
+        parsedSim = JSON.parse(responseSim);
       } catch (e) {
         try {
           const m = String(collected).match(/\{[\s\S]*\}/);
@@ -287,16 +311,16 @@ export default function Card({ selected }: CardProps) {
         }
       }
 
-      if (parsed) {
-        setUserIPA(parsed.userIPA || parsed.user_ipa || '');
+      if (parsed && parsedSim) {
+        setUserIPA(parsed.userIPA || '');
         setPronScore(
-          typeof parsed.similarity === 'number'
-            ? parsed.similarity
-            : parsed.similarity
-              ? Number(parsed.similarity)
+          typeof parsedSim.similarity === 'number'
+            ? parsedSim.similarity
+            : parsedSim.similarity
+              ? Number(parsedSim.similarity)
               : null
         );
-        setStatus(parsed.match ? CORRECT : INCORRECT);
+        setStatus(parsedSim.similarity >= 95 ? CORRECT : INCORRECT);
       } else {
         // fallback: show that analysis failed
         setUserIPA('—');
@@ -369,7 +393,7 @@ export default function Card({ selected }: CardProps) {
             <div className="scores">
               <div className="content-left">{userIPA}</div>
               <div className="vertical-divider"></div>
-              <div className="content-right">{pronScore * 100}%</div>
+              <div className="content-right">{pronScore}%</div>
             </div>
           )}
         </div>
