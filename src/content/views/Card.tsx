@@ -446,7 +446,6 @@ export default function Card({ selected }: CardProps) {
             >
               <div className="icon-slot circle" />
               <img src={MicSVG} className="icon-inner" />
-              {recording && <div className="mic-recording-indicator" />}
             </div>
 
             <div className="icon-slot pos-2" onClick={onSpeakerClick}>
