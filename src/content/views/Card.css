@@ -111,16 +111,16 @@
 .scores {
   font-size: 9px;
   /* 1. Apply the same gradient background */
-    background: linear-gradient(115deg, #7a91dd 0%, #fba580 100%);
-    
-    /* 2. Clip the background to the shape of the text */
-    -webkit-background-clip: text; /* Vendor prefix for better compatibility */
-    background-clip: text;
-    
-    /* 3. Make the text transparent so the background shows through */
-    -webkit-text-fill-color: transparent; /* Vendor prefix */
-    color: transparent; /* Fallback and standard property */
-    padding: 4px;
+  background: linear-gradient(115deg, #7a91dd 0%, #fba580 100%);
+
+  /* 2. Clip the background to the shape of the text */
+  -webkit-background-clip: text; /* Vendor prefix for better compatibility */
+  background-clip: text;
+
+  /* 3. Make the text transparent so the background shows through */
+  -webkit-text-fill-color: transparent; /* Vendor prefix */
+  color: transparent; /* Fallback and standard property */
+  padding: 4px;
 }
 
 /* convenience class to make the card larger */

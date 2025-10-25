@@ -21,7 +21,7 @@ interface CardProps {
 
 const ANALYZING = 'Analyzing your pronunciation...';
 const LISTENING = 'Listening...';
-const INCORRECT = "Orange marks sounds to improve!";
+const INCORRECT = 'Orange marks sounds to improve!';
 const CORRECT = 'Perfect!';
 const INIT = 'Try recording pronunciation w/ mic :)';
 
@@ -273,8 +273,6 @@ export default function Card({ selected }: CardProps) {
         { responseConstraint: callSchema }
       );
 
-      
-
       if (typeof response === 'string') collected = response;
       else if (response?.content) collected = String(response.content);
       else collected = typeof response === 'object' ? JSON.stringify(response) : String(response);
@@ -285,26 +283,24 @@ export default function Card({ selected }: CardProps) {
       try {
         parsed = typeof collected === 'string' ? JSON.parse(collected) : collected;
         const simSchema = {
-        type: 'object',
-        description: `I want to see if I'm pronuncing the word correctly. Give constructive feedback for pronunciation of user's pronunciation (${parsed.usreIPA}) is correct for '${phon}'. Point out the wrong phonetic alphabet made by the user. Be concise and brutally honest, no need to say incorrect, just the feedback`,
-        properties: {
-          feedback: { type: 'string' },
-          match: { type: 'boolean' },
-        },
-        required: ['feedback', 'match'],
-      } as const;
-
-      const responseSim = await audioSession.prompt(
-        [
-          {
-            role: 'user',
-            content: [
-              { type: 'text', value: promptText },
-            ],
+          type: 'object',
+          description: `I want to see if I'm pronuncing the word correctly. Give constructive feedback for pronunciation of user's pronunciation (${parsed.usreIPA}) is correct for '${phon}'. Point out the wrong phonetic alphabet made by the user. Be concise and brutally honest, no need to say incorrect, just the feedback`,
+          properties: {
+            feedback: { type: 'string' },
+            match: { type: 'boolean' },
           },
-        ],
-        { responseConstraint: simSchema}
-      );
+          required: ['feedback', 'match'],
+        } as const;
+
+        const responseSim = await audioSession.prompt(
+          [
+            {
+              role: 'user',
+              content: [{ type: 'text', value: promptText }],
+            },
+          ],
+          { responseConstraint: simSchema }
+        );
         parsedSim = JSON.parse(responseSim);
       } catch (e) {
         try {
@@ -318,7 +314,7 @@ export default function Card({ selected }: CardProps) {
       if (parsed && parsedSim) {
         setUserIPA(parsed.userIPA || '');
         setFeedback(parsedSim.feedback);
-        setMatch(parsedSim.match); 
+        setMatch(parsedSim.match);
         setStatus(parsedSim.match ? CORRECT : INCORRECT);
       } else {
         // fallback: show that analysis failed
@@ -349,7 +345,16 @@ export default function Card({ selected }: CardProps) {
     if (typeof status === 'string' && status.includes(keyword)) {
       const parts = status.split(keyword);
       // interleave parts with colored keyword spans
-      return parts.flatMap((p, i) => (i === parts.length - 1 ? [p] : [p, <span key={`kw-${i}`} className="orange-word">{keyword}</span>]));
+      return parts.flatMap((p, i) =>
+        i === parts.length - 1
+          ? [p]
+          : [
+              p,
+              <span key={`kw-${i}`} className="orange-word">
+                {keyword}
+              </span>,
+            ]
+      );
     }
     return status;
   };
@@ -359,7 +364,8 @@ export default function Card({ selected }: CardProps) {
   const split = (s: string) => Array.from(s || '');
 
   function buildLCSTable(a: string[], b: string[]) {
-    const n = a.length, m = b.length;
+    const n = a.length,
+      m = b.length;
     const table: number[][] = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
     for (let i = 1; i <= n; i++) {
       for (let j = 1; j <= m; j++) {
@@ -371,12 +377,14 @@ export default function Card({ selected }: CardProps) {
   }
 
   function backtrackLCS(table: number[][], a: string[], b: string[]) {
-    let i = a.length, j = b.length;
+    let i = a.length,
+      j = b.length;
     const matches: Array<[number, number]> = [];
     while (i > 0 && j > 0) {
       if (a[i - 1] === b[j - 1]) {
         matches.push([i - 1, j - 1]);
-        i--; j--;
+        i--;
+        j--;
       } else if (table[i - 1][j] >= table[i][j - 1]) {
         i--;
       } else {
@@ -397,7 +405,11 @@ export default function Card({ selected }: CardProps) {
     return a.map((ch, idx) => {
       if (ch.trim() === '') return ch;
       if (matchedIndices.has(idx)) return <span key={idx}>{ch}</span>;
-      return <span key={idx} className="orange-word">{ch}</span>;
+      return (
+        <span key={idx} className="orange-word">
+          {ch}
+        </span>
+      );
     });
   };
 
@@ -446,10 +458,71 @@ export default function Card({ selected }: CardProps) {
 
         <div className="analyze">
           <span className="status">{renderStatus()}</span>
-          {(status === INCORRECT || status == CORRECT) && (
-            <div className="scores">
-              {feedback}
-            </div>
+          {(status === INCORRECT || status == CORRECT) && <div className="scores">{feedback}</div>}
+          {status === LISTENING && (
+            <svg id="animatedWave" viewBox="0 0 400 100" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="waveGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#7a91dd" />
+                  <stop offset="100%" stopColor="#fba580" />
+                </linearGradient>
+                {/* Path for the slower, broader background wave */}
+                <path id="wavePath2">
+                  <animate
+                    attributeName="d"
+                    dur="4s"
+                    repeatCount="indefinite"
+                    keyTimes="0;0.33;0.66;1"
+                    values="
+                    M-30,50 C120,50 220,50 370,50 Z;      
+                    M-30,50 C120,100 220,0 370,50 Z;      
+                    M-30,50 C120,0 220,100 370,50 Z;      
+                    M-30,50 C120,50 220,50 370,50 Z;
+                  "
+                  />
+                </path>
+                {/* Path for the faster, sharper foreground wave */}
+                <path id="wavePath1">
+                  <animate
+                    attributeName="d"
+                    dur="3s"
+                    begin="-1s"
+                    repeatCount="indefinite"
+                    keyTimes="0;0.33;0.66;1"
+                    values="
+                        M50,50 C200,50 300,50 450,50 Z;  
+                        M50,50 C150,90 350,10 450,50 Z;  
+                        M50,50 C150,10 350,90 450,50 Z;
+                        M50,50 C200,50 300,50 450,50 Z;
+                    "
+                  />
+                </path>
+              </defs>
+
+              {/* Render the waves */}
+              <g style={{ mixBlendMode: 'multiply' }}>
+                {/* Background wave (top and bottom) */}
+                <use href="#wavePath2" fill="url(#waveGradient)" opacity="0.2" />
+                <use
+                  href="#wavePath2"
+                  transform="translate(0 100) scale(1 -1)"
+                  fill="url(#waveGradient)"
+                  opacity="0.2"
+                />
+
+                {/* Foreground wave (top and bottom) */}
+                <use href="#wavePath1" fill="url(#waveGradient)" opacity="0.4" />
+                <use
+                  href="#wavePath1"
+                  transform="translate(0 100) scale(1 -1)"
+                  fill="url(#waveGradient)"
+                  opacity="0.4"
+                />
+              </g>
+
+              {/* Center line */}
+              <path d="M0,50 L400,50" stroke="url(#waveGradient)" strokeWidth="1.5" />
+            </svg>
           )}
         </div>
 
