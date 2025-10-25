@@ -427,9 +427,6 @@ export default function Card({ selected }: CardProps) {
         <div className="card-header">
           <span className="card-title">{selected}</span>
           <span className="card-subtle">{part}</span>
-          <span className="card-subtle">
-            <img src={HeartSVG} />
-          </span>
         </div>
 
         <div className="phonetic-group">
