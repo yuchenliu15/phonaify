@@ -352,6 +352,53 @@ export default function Card({ selected }: CardProps) {
     return status;
   };
 
+  // Simple LCS-based highlighter: marks characters in the correct phonetic string
+  // that are NOT part of the longest common subsequence with the user's IPA.
+  const split = (s: string) => Array.from(s || '');
+
+  function buildLCSTable(a: string[], b: string[]) {
+    const n = a.length, m = b.length;
+    const table: number[][] = Array.from({ length: n + 1 }, () => new Array(m + 1).fill(0));
+    for (let i = 1; i <= n; i++) {
+      for (let j = 1; j <= m; j++) {
+        if (a[i - 1] === b[j - 1]) table[i][j] = table[i - 1][j - 1] + 1;
+        else table[i][j] = Math.max(table[i - 1][j], table[i][j - 1]);
+      }
+    }
+    return table;
+  }
+
+  function backtrackLCS(table: number[][], a: string[], b: string[]) {
+    let i = a.length, j = b.length;
+    const matches: Array<[number, number]> = [];
+    while (i > 0 && j > 0) {
+      if (a[i - 1] === b[j - 1]) {
+        matches.push([i - 1, j - 1]);
+        i--; j--;
+      } else if (table[i - 1][j] >= table[i][j - 1]) {
+        i--;
+      } else {
+        j--;
+      }
+    }
+    matches.reverse();
+    return matches;
+  }
+
+  const highlightPhon = (correctPhon: string, user: string): React.ReactNode => {
+    const a = split(correctPhon);
+    const b = split(user);
+    if (a.length === 0 || b.length === 0) return correctPhon;
+    const table = buildLCSTable(a, b);
+    const matches = backtrackLCS(table, a, b);
+    const matchedIndices = new Set(matches.map(([ia]) => ia));
+    return a.map((ch, idx) => {
+      if (ch.trim() === '') return ch;
+      if (matchedIndices.has(idx)) return <span key={idx}>{ch}</span>;
+      return <span key={idx} className="orange-word">{ch}</span>;
+    });
+  };
+
   return (
     <div className={`card-root${loading ? ' loading' : ''}`}>
       {loading && (
@@ -373,7 +420,7 @@ export default function Card({ selected }: CardProps) {
 
         <div className="phonetic-group">
           <div className="phonetic">
-            <span className="phonetic-text">{phon}</span>
+            <span className="phonetic-text">{highlightPhon(phon, userIPA)}</span>
           </div>
           <div className="icons-group">
             <div
