@@ -20,11 +20,12 @@ interface CardProps {
 }
 
 const ANALYZING = 'Analyzing your pronunciation...';
+const LISTENING = 'Listening...';
 const INCORRECT = "Orange marks sounds to improve!";
 const CORRECT = 'Perfect!';
 const INIT = 'Try recording pronunciation w/ mic :)';
 
-type Status = typeof ANALYZING | typeof INCORRECT | typeof CORRECT | typeof INIT;
+type Status = typeof ANALYZING | typeof INCORRECT | typeof CORRECT | typeof INIT | typeof LISTENING;
 
 const DEF_SCHMEA = {
   type: 'object',
@@ -128,6 +129,7 @@ export default function Card({ selected }: CardProps) {
     setUserIPA('');
     setElapsedMs(0);
     setRecording(true);
+    setStatus(LISTENING);
     chunksRef.current = [];
 
     try {
