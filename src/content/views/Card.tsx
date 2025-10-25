@@ -20,8 +20,8 @@ interface CardProps {
 }
 
 const ANALYZING = 'Analyzing your pronunciation...';
-const INCORRECT = "You're almost correct, try again!";
-const CORRECT = 'Perfect score!';
+const INCORRECT = "Orange marks sounds to improve!";
+const CORRECT = 'Perfect!';
 const INIT = 'Try recording pronunciation w/ mic :)';
 
 type Status = typeof ANALYZING | typeof INCORRECT | typeof CORRECT | typeof INIT;
@@ -54,6 +54,8 @@ export default function Card({ selected }: CardProps) {
   const [status, setStatus] = useState<Status>(INIT);
   const [userIPA, setUserIPA] = useState('');
   const [pronScore, setPronScore] = useState<number>(0);
+  const [feedback, setFeedback] = useState<string>('');
+  const [match, setMatch] = useState<boolean>(false);
   const [syns, setSyns] = useState<string[]>([]);
   const [def, setDef] = useState('');
   const [phon, setPhon] = useState('');
@@ -124,7 +126,6 @@ export default function Card({ selected }: CardProps) {
   const startListening = async (ev?: React.MouseEvent | React.TouchEvent) => {
     ev && (ev as any).preventDefault?.();
     setUserIPA('');
-    setPronScore(null);
     setElapsedMs(0);
     setRecording(true);
     chunksRef.current = [];
@@ -257,15 +258,6 @@ export default function Card({ selected }: CardProps) {
         required: ['userIPA'],
       } as const;
 
-      const simSchema = {
-        type: 'object',
-        description: `I want to see if I'm pronuncing the word correctly. Similarity score (0 to 100) measures how similar the word pronunciation of user audio is to actual word '${selected}'. Use pronunciation and International Phonetic Alphabet to compare also, i.e. how close is IPA of user pronunciation to standard IPA of the word.`,
-        properties: {
-          similarity: { type: 'number' },
-        },
-        required: ['similarity'],
-      } as const;
-
       const response = await audioSession.prompt(
         [
           {
@@ -279,18 +271,7 @@ export default function Card({ selected }: CardProps) {
         { responseConstraint: callSchema }
       );
 
-      const responseSim = await audioSession.prompt(
-        [
-          {
-            role: 'user',
-            content: [
-              { type: 'text', value: promptText },
-              { type: 'audio', value: arrayBuffer },
-            ],
-          },
-        ],
-        { responseConstraint: simSchema}
-      );
+      
 
       if (typeof response === 'string') collected = response;
       else if (response?.content) collected = String(response.content);
@@ -301,6 +282,27 @@ export default function Card({ selected }: CardProps) {
       let parsedSim: any = null;
       try {
         parsed = typeof collected === 'string' ? JSON.parse(collected) : collected;
+        const simSchema = {
+        type: 'object',
+        description: `I want to see if I'm pronuncing the word correctly. Give constructive feedback for pronunciation of user's pronunciation (${parsed.usreIPA}) is correct for '${phon}'. Point out the wrong phonetic alphabet made by the user. Be concise and brutally honest, no need to say incorrect, just the feedback`,
+        properties: {
+          feedback: { type: 'string' },
+          match: { type: 'boolean' },
+        },
+        required: ['feedback', 'match'],
+      } as const;
+
+      const responseSim = await audioSession.prompt(
+        [
+          {
+            role: 'user',
+            content: [
+              { type: 'text', value: promptText },
+            ],
+          },
+        ],
+        { responseConstraint: simSchema}
+      );
         parsedSim = JSON.parse(responseSim);
       } catch (e) {
         try {
@@ -313,14 +315,9 @@ export default function Card({ selected }: CardProps) {
 
       if (parsed && parsedSim) {
         setUserIPA(parsed.userIPA || '');
-        setPronScore(
-          typeof parsedSim.similarity === 'number'
-            ? parsedSim.similarity
-            : parsedSim.similarity
-              ? Number(parsedSim.similarity)
-              : null
-        );
-        setStatus(parsedSim.similarity >= 95 ? CORRECT : INCORRECT);
+        setFeedback(parsedSim.feedback);
+        setMatch(parsedSim.match); 
+        setStatus(parsedSim.match ? CORRECT : INCORRECT);
       } else {
         // fallback: show that analysis failed
         setUserIPA('—');
@@ -391,9 +388,7 @@ export default function Card({ selected }: CardProps) {
           <span className="status">{status}</span>
           {(status === INCORRECT || status == CORRECT) && (
             <div className="scores">
-              <div className="content-left">{userIPA}</div>
-              <div className="vertical-divider"></div>
-              <div className="content-right">{pronScore}%</div>
+              {feedback}
             </div>
           )}
         </div>
