@@ -341,6 +341,17 @@ export default function Card({ selected }: CardProps) {
     } else alert('Your browser does not support the Web Speech API.');
   };
 
+  // render the status string but color only the literal word "Orange"
+  const renderStatus = () => {
+    const keyword = 'Orange';
+    if (typeof status === 'string' && status.includes(keyword)) {
+      const parts = status.split(keyword);
+      // interleave parts with colored keyword spans
+      return parts.flatMap((p, i) => (i === parts.length - 1 ? [p] : [p, <span key={`kw-${i}`} className="orange-word">{keyword}</span>]));
+    }
+    return status;
+  };
+
   return (
     <div className={`card-root${loading ? ' loading' : ''}`}>
       {loading && (
@@ -385,7 +396,7 @@ export default function Card({ selected }: CardProps) {
         </div>
 
         <div className="analyze">
-          <span className="status">{status}</span>
+          <span className="status">{renderStatus()}</span>
           {(status === INCORRECT || status == CORRECT) && (
             <div className="scores">
               {feedback}

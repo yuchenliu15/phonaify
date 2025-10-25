@@ -310,6 +310,11 @@
   line-height: 15px;
 }
 
+/* class to color only the specific word orange */
+.orange-word {
+  color: #fba580;
+}
+
 .definition-group {
   margin-top: 2px;
 }
