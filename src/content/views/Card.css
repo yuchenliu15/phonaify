@@ -223,6 +223,7 @@
 .icon-slot {
   width: 16px;
   height: 16px;
+  position: relative;
 }
 
 .icon-slot.pos-1:hover,
@@ -236,15 +237,6 @@
   width: 16px;
   height: 16px;
   position: absolute;
-}
-
-.icon-inner {
-  width: 10px;
-  height: 10px;
-  left: 3px;
-  top: 3px;
-  position: absolute;
-  overflow: hidden;
 }
 
 .small-bar-a {
@@ -322,7 +314,7 @@
 .definition {
   width: 100%;
   box-sizing: border-box;
-  line-height: 14px;
+  line-height: 10px;
   display: flex;
   flex-direction: column;
   color: #202124;
@@ -359,7 +351,7 @@
 .example-text {
   width: 100%;
   box-sizing: border-box;
-  line-height: 14px;
+  line-height: 10px;
   justify-content: center;
   display: flex;
   flex-direction: column;
@@ -540,8 +532,8 @@
   height: 10px;
   object-fit: contain;
   position: relative;
-  left: 8px;
-  top: 2.5px;
+  left: 52%;
+  top: 20%;
 }
 
 .icon-slot.recording {
