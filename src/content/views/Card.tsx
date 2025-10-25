@@ -98,7 +98,7 @@ export default function Card({ selected }: CardProps) {
         try {
           const parsed = typeof response === 'string' ? JSON.parse(response) : response;
           setSyns(parsed.synonyms || []);
-          setPart(parsed.partsOfSpeech || '');
+          setPart(parsed.partsOfSpeech.toLowerCase() || '');
           setExample(parsed.exampleSentence || '');
           setDef(parsed.definition || '');
           setPhon(parsed.phoneticAlphabet || '');
