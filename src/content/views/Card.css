@@ -407,7 +407,8 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  gap: 6px;
+  row-gap: 3px;
+  column-gap: 3px;
   align-items: center;
   max-width: 100%;
   flex-wrap: wrap;
