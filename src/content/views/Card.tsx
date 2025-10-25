@@ -555,10 +555,7 @@ export default function Card({ selected }: CardProps) {
       </div>
 
       <div className="word-library">
-        <div className="label">Word Library</div>
-        <div className="small-rect">
-          <div className="fill" />
-        </div>
+        <div className="label">Phonaify</div>
       </div>
     </div>
   );
