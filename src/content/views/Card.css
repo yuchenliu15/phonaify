@@ -210,7 +210,7 @@
 
 .card-title {
   color: #202124;
-  font-size: 9px;
+  font-size: 10px;
   font-weight: 500;
   word-wrap: break-word;
 }
@@ -320,7 +320,7 @@
   display: flex;
   flex-direction: column;
   color: #202124;
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
 }
@@ -358,7 +358,7 @@
   display: flex;
   flex-direction: column;
   color: #202124;
-  font-size: 10px;
+  font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
 }
@@ -422,7 +422,7 @@
   color: #202124;
   padding: 2px 8px;
   border-radius: 6px;
-  font-size: 9px;
+  font-size: 8px;
   line-height: 9px;
   box-shadow: none;
 }
