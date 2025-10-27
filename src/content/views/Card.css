@@ -98,7 +98,7 @@
 }
 
 .card-gradient {
-  width: 181px;
+  width: 183px;
   height: 39px;
   left: 0px;
   top: 183px;
@@ -139,6 +139,8 @@
   border: 0.5px solid #e0e0e0;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
   overflow: hidden;
 }
 
@@ -291,6 +293,7 @@
   display: flex;
   flex-direction: column;
   height: auto;
+  border-radius: 10px;
 }
 .status {
   color: #5f6368;
