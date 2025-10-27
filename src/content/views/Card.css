@@ -597,14 +597,14 @@
   position: absolute;
   left: 0;
   top: 0;
-  width: 181px;
-  height: 200px;
+  width: 183px;
+  height: 205px;
   z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
   pointer-events: auto; /* block interactions */
-  border-radius: 10px 10px 4px 4px; /* match panel rounding */
+  border-radius: 10px 10px 10px 10px; /* match panel rounding */
   overflow: hidden;
 }
 
