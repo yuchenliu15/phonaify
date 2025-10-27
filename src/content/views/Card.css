@@ -159,9 +159,11 @@
   overflow-x: hidden; /* prevent horizontal scrolling */
   -webkit-overflow-scrolling: touch;
   /* Reserve space for the scrollbar so it doesn't overlap content */
-  scrollbar-gutter: stable both-edges;
-  padding-right: 12px; /* room for scrollbar (fallback for browsers without scrollbar-gutter) */
+  scrollbar-gutter: stable;
   padding-top: 7px;
+  padding-bottom: 7px;
+  padding-left: 7px;
+  padding-right: 5px;
   scrollbar-width: thin; /* Firefox: make scrollbar thinner */
   scrollbar-color: rgba(0, 0, 0, 0.12) transparent; /* Firefox thumb + track */
 }
