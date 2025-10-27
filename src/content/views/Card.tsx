@@ -4,6 +4,7 @@ import HeartSVG from '@/assets/heart.svg';
 import Speak from '@/assets/speak.svg?inline';
 import Listen from '@/assets/listen.svg?inline';
 import Speed from '@/assets/speed.svg?inline';
+import Speeding from '@/assets/speeding.svg?inline';
 import MicSVG from '@/assets/mic.svg';
 import { useEffect, useRef, useState } from 'react';
 
@@ -64,6 +65,18 @@ export default function Card({ selected }: CardProps) {
   const [phon, setPhon] = useState('');
   const [part, setPart] = useState('');
   const [example, setExample] = useState('');
+  const [speed, setSpeed] = useState<number>(1.0);
+  const [speedClicked, setSpeedClicked] = useState<boolean>(false);
+
+  const onSpeedClick = () => {
+    if (speedClicked) {
+      setSpeedClicked(false);
+      setSpeed(1.0);
+    } else {
+      setSpeedClicked(true);
+      setSpeed(0.05);
+    }
+  };
 
   const removeSession = () => {
     if (session.current) {
@@ -335,7 +348,7 @@ export default function Card({ selected }: CardProps) {
   const onSpeakerClick = () => {
     if ('speechSynthesis' in window) {
       const utterance = new SpeechSynthesisUtterance(selected);
-      utterance.rate = 1;
+      utterance.rate = speed;
       utterance.pitch = 1.2;
       window.speechSynthesis.speak(utterance);
     } else alert('Your browser does not support the Web Speech API.');
@@ -448,8 +461,15 @@ export default function Card({ selected }: CardProps) {
             >
               <img src={Listen} className="icon-inner" />
             </div>
-
-
+            {speedClicked ? (
+              <div className="icon-slot" onClick={onSpeedClick}>
+                <img src={Speeding} className="icon-inner" />
+              </div>
+            ) : (
+              <div className="icon-slot" onClick={onSpeedClick}>
+                <img src={Speed} className="icon-inner" />
+              </div>
+            )}
           </div>
         </div>
 

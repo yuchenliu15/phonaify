@@ -196,7 +196,7 @@
 .icons-group {
   display: flex;
   flex-direction: row;
-  gap: 6px;
+  gap: 5px;
   align-items: center;
   pointer-events: auto;
   padding: 2px;
@@ -238,8 +238,7 @@
   position: relative;
 }
 
-.icon-slot.pos-1:hover,
-.icon-slot.pos-2:hover {
+.icon-inner:hover {
   cursor: pointer;
 }
 
@@ -250,9 +249,6 @@
   height: 16px;
   position: absolute;
 }
-
-.olute;
-  
 
 .small-bar-a {
   width: 6.67px;
@@ -542,8 +538,6 @@
   position: absolute;
   background: white;
 }
-
-
 
 .icon-slot.recording {
   filter: hue-rotate(10deg) saturate(1.1);
