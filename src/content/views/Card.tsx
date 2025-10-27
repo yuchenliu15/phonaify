@@ -2,7 +2,9 @@ import './Card.css';
 import HeartSVG from '@/assets/heart.svg';
 // CrossSVG intentionally removed (unused) to avoid lint errors
 import Speak from '@/assets/speak.svg?inline';
+import Speaking from '@/assets/speaking.svg?inline';
 import Listen from '@/assets/listen.svg?inline';
+import Listening from '@/assets/listening.svg?inline';
 import Speed from '@/assets/speed.svg?inline';
 import Speeding from '@/assets/speeding.svg?inline';
 import MicSVG from '@/assets/mic.svg';
@@ -67,6 +69,8 @@ export default function Card({ selected }: CardProps) {
   const [example, setExample] = useState('');
   const [speed, setSpeed] = useState<number>(1.0);
   const [speedClicked, setSpeedClicked] = useState<boolean>(false);
+  const [speakClicked, setSpeakClicked] = useState<boolean>(false);
+  const [listenClicked, setListenClicked] = useState<boolean>(false);
 
   const onSpeedClick = () => {
     if (speedClicked) {
@@ -145,6 +149,7 @@ export default function Card({ selected }: CardProps) {
     setElapsedMs(0);
     setRecording(true);
     setStatus(LISTENING);
+    setListenClicked(true);
     chunksRef.current = [];
 
     try {
@@ -189,6 +194,7 @@ export default function Card({ selected }: CardProps) {
   };
 
   const stopListening = async (ev?: React.MouseEvent | React.TouchEvent) => {
+    setListenClicked(false);
     ev && (ev as any).preventDefault?.();
     if (!recorderRef.current) {
       setRecording(false);
@@ -347,9 +353,13 @@ export default function Card({ selected }: CardProps) {
 
   const onSpeakerClick = () => {
     if ('speechSynthesis' in window) {
+      setSpeakClicked(true);
       const utterance = new SpeechSynthesisUtterance(selected);
       utterance.rate = speed;
       utterance.pitch = 1.2;
+      utterance.onend = () => {
+        setSpeakClicked(false);
+      };
       window.speechSynthesis.speak(utterance);
     } else alert('Your browser does not support the Web Speech API.');
   };
@@ -449,18 +459,36 @@ export default function Card({ selected }: CardProps) {
             <span className="phonetic-text">{highlightPhon(phon, userIPA)}</span>
           </div>
           <div className="icons-group">
-            <div className="icon-slot pos-2" onClick={onSpeakerClick}>
-              <img src={Speak} className="icon-inner" />
-            </div>
-            <div
-              className={`icon-slot pos-1${recording ? ' recording' : ''}`}
-              onMouseDown={startListening}
-              onMouseUp={stopListening}
-              onTouchStart={startListening}
-              onTouchEnd={stopListening}
-            >
-              <img src={Listen} className="icon-inner" />
-            </div>
+            {speakClicked ? (
+              <div className="icon-slot pos-2" onClick={onSpeakerClick}>
+                <img src={Speaking} className="icon-inner" />
+              </div>
+            ) : (
+              <div className="icon-slot pos-2" onClick={onSpeakerClick}>
+                <img src={Speak} className="icon-inner" />
+              </div>
+            )}
+            {listenClicked ? (
+              <div
+                className={`icon-slot pos-1${recording ? ' recording' : ''}`}
+                onMouseDown={startListening}
+                onMouseUp={stopListening}
+                onTouchStart={startListening}
+                onTouchEnd={stopListening}
+              >
+                <img src={Listening} className="icon-inner" />
+              </div>
+            ) : (
+              <div
+                className={`icon-slot pos-1${recording ? ' recording' : ''}`}
+                onMouseDown={startListening}
+                onMouseUp={stopListening}
+                onTouchStart={startListening}
+                onTouchEnd={stopListening}
+              >
+                <img src={Listen} className="icon-inner" />
+              </div>
+            )}
             {speedClicked ? (
               <div className="icon-slot" onClick={onSpeedClick}>
                 <img src={Speeding} className="icon-inner" />
