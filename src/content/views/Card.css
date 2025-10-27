@@ -336,6 +336,7 @@
   font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
+  margin-bottom: 2px;
 }
 .example-group {
   margin-top: 4px;
@@ -350,6 +351,7 @@
   font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
+  margin-bottom: 2px;
 }
 
 .example-text {
