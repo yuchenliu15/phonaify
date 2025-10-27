@@ -22,8 +22,8 @@ interface CardProps {
 const ANALYZING = 'Analyzing your pronunciation...';
 const LISTENING = 'Listening...';
 const INCORRECT = 'Orange marks sounds to improve!';
-const CORRECT = 'Perfect!';
-const INIT = 'Try recording pronunciation w/ mic :)';
+const CORRECT = 'Perfect, great pronunciation!';
+const INIT = 'Try recording with mic :)';
 
 type Status = typeof ANALYZING | typeof INCORRECT | typeof CORRECT | typeof INIT | typeof LISTENING;
 
