@@ -298,7 +298,7 @@
   border-radius: 10px;
 }
 .status {
-  color: #5f6368;
+  color: #939496;
   font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
@@ -332,7 +332,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  color: #5f6368;
+  color: #939496;
   font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
@@ -347,7 +347,7 @@
   justify-content: center;
   display: flex;
   flex-direction: column;
-  color: #5f6368;
+  color: #939496;
   font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
@@ -389,7 +389,7 @@
   justify-content: center;
   display: flex;
   flex-direction: column;
-  color: #5f6368;
+  color: #939496;
   font-size: 8px;
   font-weight: 400;
   word-wrap: break-word;
