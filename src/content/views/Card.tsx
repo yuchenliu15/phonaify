@@ -1,7 +1,9 @@
 import './Card.css';
 import HeartSVG from '@/assets/heart.svg';
 // CrossSVG intentionally removed (unused) to avoid lint errors
-import SpeakerSVG from '@/assets/speaker.svg';
+import Speak from '@/assets/speak.svg?inline';
+import Listen from '@/assets/listen.svg?inline';
+import Speed from '@/assets/speed.svg?inline';
 import MicSVG from '@/assets/mic.svg';
 import { useEffect, useRef, useState } from 'react';
 
@@ -434,6 +436,9 @@ export default function Card({ selected }: CardProps) {
             <span className="phonetic-text">{highlightPhon(phon, userIPA)}</span>
           </div>
           <div className="icons-group">
+            <div className="icon-slot pos-2" onClick={onSpeakerClick}>
+              <img src={Speak} className="icon-inner" />
+            </div>
             <div
               className={`icon-slot pos-1${recording ? ' recording' : ''}`}
               onMouseDown={startListening}
@@ -441,14 +446,10 @@ export default function Card({ selected }: CardProps) {
               onTouchStart={startListening}
               onTouchEnd={stopListening}
             >
-              <div className="icon-slot circle" />
-              <img src={MicSVG} className="icon-inner" />
+              <img src={Listen} className="icon-inner" />
             </div>
 
-            <div className="icon-slot pos-2" onClick={onSpeakerClick}>
-              <div className="icon-slot circle" />
-              <img src={SpeakerSVG} className="icon-inner" />
-            </div>
+
           </div>
         </div>
 
