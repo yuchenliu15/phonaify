@@ -1,9 +1,9 @@
 # Phonaify
+A Chrome extension that helps you perfect your pronunciation and understanding of English!
 
-### todo
-1. audio input
-2. speaker speed
-3. word list
+<img width="647" height="497" alt="image" src="https://github.com/user-attachments/assets/a02a812c-3680-4251-96d0-9c3247ecbf9b" />
+
+
 
 ## Quick Start
 
