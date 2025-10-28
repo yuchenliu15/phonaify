@@ -1,5 +1,4 @@
 import './Card.css';
-import HeartSVG from '@/assets/heart.svg';
 // CrossSVG intentionally removed (unused) to avoid lint errors
 import Speak from '@/assets/speak.svg?inline';
 import Speaking from '@/assets/speaking.svg?inline';
@@ -7,7 +6,6 @@ import Listen from '@/assets/listen.svg?inline';
 import Listening from '@/assets/listening.svg?inline';
 import Speed from '@/assets/speed.svg?inline';
 import Speeding from '@/assets/speeding.svg?inline';
-import MicSVG from '@/assets/mic.svg';
 import { useEffect, useRef, useState } from 'react';
 
 // Minimal ambient declaration for the external LanguageModel global used in this project.
@@ -59,9 +57,7 @@ export default function Card({ selected }: CardProps) {
   const stopTimeoutRef = useRef<number | null>(null);
   const [status, setStatus] = useState<Status>(INIT);
   const [userIPA, setUserIPA] = useState('');
-  const [pronScore, setPronScore] = useState<number>(0);
   const [feedback, setFeedback] = useState<string>('');
-  const [match, setMatch] = useState<boolean>(false);
   const [syns, setSyns] = useState<string[]>([]);
   const [def, setDef] = useState('');
   const [phon, setPhon] = useState('');
@@ -335,12 +331,10 @@ export default function Card({ selected }: CardProps) {
       if (parsed && parsedSim) {
         setUserIPA(parsed.userIPA || '');
         setFeedback(parsedSim.feedback);
-        setMatch(parsedSim.match);
         setStatus(parsedSim.match ? CORRECT : INCORRECT);
       } else {
         // fallback: show that analysis failed
         setUserIPA('—');
-        setPronScore(0);
         setStatus(INCORRECT);
       }
     } catch (err) {
