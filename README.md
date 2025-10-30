@@ -1,11 +1,21 @@
 # Phonaify
 A Chrome extension that helps you perfect your pronunciation and understanding of English!
 
+Uses lcoal Gemini Nano's Prompt API in Chrome to layout standard definitions and phonetics, extract user pronunciations, and give feedback based off of phonetics of user pronunciations.
+
 <img width="647" height="497" alt="image" src="https://github.com/user-attachments/assets/a02a812c-3680-4251-96d0-9c3247ecbf9b" />
 
+## Implementation details
+- Structured output to retrieve definition, synonyms, parts of speech, phonetics, and example sentences of a word
+- Structured output for audio and text prompt to Gemini Nano to retrieve user's pronunciations
+- LCS (longest common sequence) to compare/diff phonetics between standard vs. user pronunciations
 
+## Todos in future
+- Have long memory/context of user pronunciations to track user's pronunciation over time
+- Cold start is really slow right now - ~4 seconds. maybe use caching/initialzing the local model in background
+- LCS is simple but has drawbacks, i.e. it's character level comparison. We should explore other comparisons for phonetics
 
-## Quick Start
+## Developing locally
 
 1. Install dependencies:
 
