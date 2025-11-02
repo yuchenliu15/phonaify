@@ -22,6 +22,7 @@ Uses local Gemini Nano's Prompt API in Chrome to layout standard definitions and
 - Have long memory/context of user pronunciations to track user's pronunciation over time
 - Cold start is really slow right now - ~4 seconds. maybe use caching/initialzing the local model in background
 - LCS is simple but has drawbacks, i.e. it's character level comparison. We should explore other comparisons for phonetics
+- Tune temperature and and topk
 
 ## Developing locally
 
