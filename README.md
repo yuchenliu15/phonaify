@@ -3,9 +3,15 @@ A Chrome extension that helps you perfect your pronunciation and understanding o
 
 Uses local Gemini Nano's Prompt API in Chrome to layout standard definitions and phonetics, extract user pronunciations, and give feedback based off of phonetics of user pronunciations.
 
-⚠️NOTE⚠️: Since Gemini Nano's Prompt API is only experimental in Chrome, go to `chrome://flags` and enable Prompt API in order to use Phonaify. (May also need page refresh after Chrome re-launch)
-
 <img width="647" height="497" alt="image" src="https://github.com/user-attachments/assets/a02a812c-3680-4251-96d0-9c3247ecbf9b" />
+
+---
+
+> [!WARNING]
+> ⚠️NOTE⚠️: Since Gemini Nano's Prompt API with Multimodal Input is only experimental in Chrome, go to `chrome://flags` and enable "Prompt API with Multimodal Input" in order to use Phonaify. (May also need page refresh after Chrome re-launch)
+
+> <img width="1013" height="519" alt="image" src="https://github.com/user-attachments/assets/21233354-d7be-41f7-8649-85eb71d2ab96" />
+
 
 ## Implementation details
 - Structured output to retrieve definition, synonyms, parts of speech, phonetics, and example sentences of a word
