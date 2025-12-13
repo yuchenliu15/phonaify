@@ -12,6 +12,12 @@ Uses local Gemini Nano's Prompt API in Chrome to layout standard definitions and
 
 > <img width="1013" height="519" alt="image" src="https://github.com/user-attachments/assets/21233354-d7be-41f7-8649-85eb71d2ab96" />
 
+## Design
+Phonaify is essentially a dictionary card with a pronunciation coach.
+
+This solves 2 pain points we had:
+- Learning to pronounce is too inactive to just listen/read only. ➡️ Create a simple feedback loop that takes in user pronounciation and outputs feedback.
+- Language models output unstructured/scattered information like definiton and synonyms. ➡️ Structure these info into a well-defined dictionary card.
 
 ## Implementation details
 - Structured output to retrieve definition, synonyms, parts of speech, phonetics, and example sentences of a word
